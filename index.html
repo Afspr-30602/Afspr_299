@@ -1,1 +1,758 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#111827">
+<title>Xuất Nhập Tồn Kho Thành Phẩm</title>
 
+<script src="https://unpkg.com/html5-qrcode"></script>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #f3f4f6;
+  color: #111827;
+}
+
+.container {
+  width: 100%;
+  max-width: 620px;
+  margin: 0 auto;
+  padding: 18px;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 24px;
+  line-height: 1.3;
+}
+
+.header p {
+  margin: 7px 0 0;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.mode-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.mode-button {
+  border: 0;
+  border-radius: 12px;
+  padding: 17px 10px;
+  font-size: 17px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.nhap {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.xuat {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.mode-button.active {
+  box-shadow: 0 0 0 3px #111827;
+}
+
+.card {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 18px;
+  margin-bottom: 16px;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+}
+
+.card-title {
+  margin: 0 0 14px;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+label {
+  display: block;
+  margin: 12px 0 6px;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.required {
+  color: #dc2626;
+}
+
+input,
+textarea {
+  width: 100%;
+  border: 1px solid #d1d5db;
+  border-radius: 9px;
+  padding: 12px;
+  font-size: 16px;
+  outline: none;
+  background: #ffffff;
+}
+
+input:focus,
+textarea:focus {
+  border-color: #2563eb;
+}
+
+input[readonly] {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+textarea {
+  min-height: 85px;
+  resize: vertical;
+}
+
+.action-button {
+  width: 100%;
+  border: 0;
+  border-radius: 10px;
+  padding: 14px;
+  font-size: 17px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.scan-button {
+  background: #111827;
+  color: #ffffff;
+}
+
+.stop-button {
+  margin-top: 10px;
+  background: #6b7280;
+  color: #ffffff;
+}
+
+.submit-button {
+  background: #2563eb;
+  color: #ffffff;
+}
+
+.submit-button:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+}
+
+#reader {
+  width: 100%;
+  margin-top: 14px;
+}
+
+.hidden {
+  display: none;
+}
+
+.status {
+  margin-top: 15px;
+  padding: 12px;
+  border-radius: 9px;
+  text-align: center;
+  font-size: 15px;
+  font-weight: 700;
+  display: none;
+}
+
+.status.success {
+  display: block;
+  background: #dcfce7;
+  color: #166534;
+}
+
+.status.error {
+  display: block;
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.status.info {
+  display: block;
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 12px;
+  }
+
+  .header h1 {
+    font-size: 21px;
+  }
+
+  .card {
+    padding: 15px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <div class="header">
+    <h1>Xuất Nhập Tồn Kho Thành Phẩm</h1>
+    <p>Quản lý dữ liệu nhập và xuất kho</p>
+  </div>
+
+  <div class="mode-buttons">
+    <button
+      id="btnNhap"
+      class="mode-button nhap"
+      type="button"
+      onclick="setMode('NHAP')"
+    >
+      NHẬP KHO
+    </button>
+
+    <button
+      id="btnXuat"
+      class="mode-button xuat"
+      type="button"
+      onclick="setMode('XUAT')"
+    >
+      XUẤT KHO
+    </button>
+  </div>
+
+  <div class="card">
+    <h2 class="card-title">Quét mã QR</h2>
+
+    <button
+      id="scanButton"
+      class="action-button scan-button"
+      type="button"
+      onclick="startScanner()"
+    >
+      📷 QUÉT QR
+    </button>
+
+    <div id="reader"></div>
+
+    <button
+      id="stopButton"
+      class="action-button stop-button hidden"
+      type="button"
+      onclick="stopScanner()"
+    >
+      DỪNG QUÉT
+    </button>
+  </div>
+
+  <div class="card">
+    <h2 class="card-title">Thông tin đơn hàng</h2>
+
+    <label for="maLenh">
+      Mã Lệnh <span class="required">*</span>
+    </label>
+    <input
+      id="maLenh"
+      type="text"
+      readonly
+    >
+
+    <label for="khachHang">
+      Khách Hàng <span class="required">*</span>
+    </label>
+    <input
+      id="khachHang"
+      type="text"
+      readonly
+    >
+
+    <label for="donHang">
+      Đơn Hàng <span class="required">*</span>
+    </label>
+    <input
+      id="donHang"
+      type="text"
+      readonly
+    >
+
+    <label for="quyCach">
+      Quy Cách Đơn Hàng <span class="required">*</span>
+    </label>
+    <input
+      id="quyCach"
+      type="text"
+      readonly
+    >
+
+    <label for="soLuongYeuCau">
+      Số Lượng Yêu Cầu <span class="required">*</span>
+    </label>
+    <input
+      id="soLuongYeuCau"
+      type="text"
+      readonly
+    >
+  </div>
+
+  <div class="card">
+    <h2 class="card-title">Thông tin kho</h2>
+
+    <label id="labelSoLuong" for="soLuong">
+      Số Lượng Nhập <span class="required">*</span>
+    </label>
+
+    <input
+      id="soLuong"
+      type="number"
+      min="0"
+      step="any"
+      inputmode="decimal"
+    >
+
+    <label id="labelViTri" for="viTri">
+      Vị Trí Nhập <span class="required">*</span>
+    </label>
+
+    <input
+      id="viTri"
+      type="text"
+    >
+
+    <label for="ghiChu">
+      Ghi Chú
+    </label>
+
+    <textarea
+      id="ghiChu"
+      placeholder="Nhập ghi chú nếu cần"
+    ></textarea>
+  </div>
+
+  <button
+    id="submitButton"
+    class="action-button submit-button"
+    type="button"
+    onclick="submitData()"
+  >
+    💾 GHI DỮ LIỆU
+  </button>
+
+  <div id="status" class="status"></div>
+
+</div>
+
+<script>
+const API_URL = 'https://docs.google.com/spreadsheets/d/1es6ENSZiWLETLmut8sid1sRFihuzCnCIiBMJEwJhAJY/edit?gid=1267220691#gid=1267220691';
+
+const API_TOKEN = 'QR_KHO_2026';
+
+let currentMode = '';
+
+let scanner = null;
+
+let scannerRunning = false;
+
+function setMode(mode) {
+  currentMode = mode;
+
+  document.getElementById('btnNhap').classList.remove('active');
+  document.getElementById('btnXuat').classList.remove('active');
+
+  if (mode === 'NHAP') {
+    document.getElementById('btnNhap').classList.add('active');
+
+    document.getElementById('labelSoLuong').innerHTML =
+      'Số Lượng Nhập <span class="required">*</span>';
+
+    document.getElementById('labelViTri').innerHTML =
+      'Vị Trí Nhập <span class="required">*</span>';
+  }
+
+  if (mode === 'XUAT') {
+    document.getElementById('btnXuat').classList.add('active');
+
+    document.getElementById('labelSoLuong').innerHTML =
+      'Số Lượng Xuất <span class="required">*</span>';
+
+    document.getElementById('labelViTri').innerHTML =
+      'Vị Trí Xuất <span class="required">*</span>';
+  }
+
+  clearStatus();
+}
+
+function startScanner() {
+  if (!currentMode) {
+    showStatus(
+      'Vui lòng chọn NHẬP KHO hoặc XUẤT KHO.',
+      'error'
+    );
+    return;
+  }
+
+  if (scannerRunning) {
+    return;
+  }
+
+  scanner = new Html5Qrcode('reader');
+
+  scanner.start(
+    {
+      facingMode: {
+        exact: 'environment'
+      }
+    },
+    {
+      fps: 10,
+      qrbox: {
+        width: 280,
+        height: 180
+      },
+      aspectRatio: 1.777778
+    },
+    function(decodedText) {
+      processQR(decodedText);
+    },
+    function() {}
+  ).then(function() {
+    scannerRunning = true;
+
+    document
+      .getElementById('stopButton')
+      .classList.remove('hidden');
+  }).catch(function() {
+    scanner = null;
+    scannerRunning = false;
+
+    document
+      .getElementById('stopButton')
+      .classList.add('hidden');
+
+    showStatus(
+      'Không thể mở camera. Hãy kiểm tra quyền sử dụng camera của trình duyệt.',
+      'error'
+    );
+  });
+}
+
+function stopScanner() {
+  if (!scanner || !scannerRunning) {
+    return;
+  }
+
+  scanner.stop().then(function() {
+    scanner.clear();
+    scanner = null;
+    scannerRunning = false;
+
+    document
+      .getElementById('stopButton')
+      .classList.add('hidden');
+  }).catch(function() {
+    scanner = null;
+    scannerRunning = false;
+
+    document
+      .getElementById('stopButton')
+      .classList.add('hidden');
+  });
+}
+
+function processQR(text) {
+  const data = text
+    .split('|')
+    .map(function(value) {
+      return value.trim();
+    });
+
+  if (data.length !== 5) {
+    showStatus(
+      'QR không đúng định dạng.',
+      'error'
+    );
+    return;
+  }
+
+  if (!data[0]) {
+    showStatus(
+      'QR thiếu Mã Lệnh.',
+      'error'
+    );
+    return;
+  }
+
+  if (!data[1]) {
+    showStatus(
+      'QR thiếu Khách Hàng.',
+      'error'
+    );
+    return;
+  }
+
+  if (!data[2]) {
+    showStatus(
+      'QR thiếu Đơn Hàng.',
+      'error'
+    );
+    return;
+  }
+
+  if (!data[3]) {
+    showStatus(
+      'QR thiếu Quy Cách Đơn Hàng.',
+      'error'
+    );
+    return;
+  }
+
+  if (!data[4]) {
+    showStatus(
+      'QR thiếu Số Lượng Yêu Cầu.',
+      'error'
+    );
+    return;
+  }
+
+  const soLuongYeuCau = Number(data[4]);
+
+  if (
+    !Number.isFinite(soLuongYeuCau) ||
+    soLuongYeuCau <= 0
+  ) {
+    showStatus(
+      'Số Lượng Yêu Cầu trong QR không hợp lệ.',
+      'error'
+    );
+    return;
+  }
+
+  document.getElementById('maLenh').value = data[0];
+
+  document.getElementById('khachHang').value = data[1];
+
+  document.getElementById('donHang').value = data[2];
+
+  document.getElementById('quyCach').value = data[3];
+
+  document.getElementById('soLuongYeuCau').value = data[4];
+
+  stopScanner();
+
+  showStatus(
+    'Đã quét QR thành công.',
+    'success'
+  );
+}
+
+async function submitData() {
+  if (!currentMode) {
+    showStatus(
+      'Vui lòng chọn NHẬP KHO hoặc XUẤT KHO.',
+      'error'
+    );
+    return;
+  }
+
+  const maLenh =
+    document.getElementById('maLenh').value.trim();
+
+  const khachHang =
+    document.getElementById('khachHang').value.trim();
+
+  const donHang =
+    document.getElementById('donHang').value.trim();
+
+  const quyCach =
+    document.getElementById('quyCach').value.trim();
+
+  const soLuongYeuCau =
+    document.getElementById('soLuongYeuCau').value.trim();
+
+  const soLuong =
+    document.getElementById('soLuong').value.trim();
+
+  const viTri =
+    document.getElementById('viTri').value.trim();
+
+  const ghiChu =
+    document.getElementById('ghiChu').value.trim();
+
+  if (!maLenh) {
+    showStatus(
+      'Thiếu Mã Lệnh.',
+      'error'
+    );
+    return;
+  }
+
+  if (!khachHang) {
+    showStatus(
+      'Thiếu Khách Hàng.',
+      'error'
+    );
+    return;
+  }
+
+  if (!donHang) {
+    showStatus(
+      'Thiếu Đơn Hàng.',
+      'error'
+    );
+    return;
+  }
+
+  if (!quyCach) {
+    showStatus(
+      'Thiếu Quy Cách Đơn Hàng.',
+      'error'
+    );
+    return;
+  }
+
+  if (!soLuongYeuCau) {
+    showStatus(
+      'Thiếu Số Lượng Yêu Cầu.',
+      'error'
+    );
+    return;
+  }
+
+  if (!soLuong) {
+    showStatus(
+      currentMode === 'NHAP'
+        ? 'Vui lòng nhập Số Lượng Nhập.'
+        : 'Vui lòng nhập Số Lượng Xuất.',
+      'error'
+    );
+    return;
+  }
+
+  if (!viTri) {
+    showStatus(
+      currentMode === 'NHAP'
+        ? 'Vui lòng nhập Vị Trí Nhập.'
+        : 'Vui lòng nhập Vị Trí Xuất.',
+      'error'
+    );
+    return;
+  }
+
+  const soLuongNumber = Number(soLuong);
+
+  if (
+    !Number.isFinite(soLuongNumber) ||
+    soLuongNumber <= 0
+  ) {
+    showStatus(
+      currentMode === 'NHAP'
+        ? 'Số Lượng Nhập không hợp lệ.'
+        : 'Số Lượng Xuất không hợp lệ.',
+      'error'
+    );
+    return;
+  }
+
+  const submitButton =
+    document.getElementById('submitButton');
+
+  submitButton.disabled = true;
+
+  showStatus(
+    'Đang ghi dữ liệu...',
+    'info'
+  );
+
+  const params = new URLSearchParams({
+    action: 'save',
+    token: API_TOKEN,
+    mode: currentMode,
+    maLenh: maLenh,
+    khachHang: khachHang,
+    donHang: donHang,
+    quyCach: quyCach,
+    soLuongYeuCau: soLuongYeuCau,
+    soLuong: soLuong,
+    viTri: viTri,
+    ghiChu: ghiChu
+  });
+
+  try {
+    const response = await fetch(
+      API_URL + '?' + params.toString()
+    );
+
+    const result = await response.json();
+
+    if (result.success) {
+      showStatus(
+        result.message,
+        'success'
+      );
+
+      clearForm();
+    } else {
+      showStatus(
+        result.message || 'Không thể ghi dữ liệu.',
+        'error'
+      );
+    }
+  } catch (error) {
+    showStatus(
+      'Không thể kết nối với hệ thống.',
+      'error'
+    );
+  } finally {
+    submitButton.disabled = false;
+  }
+}
+
+function clearForm() {
+  document.getElementById('maLenh').value = '';
+  document.getElementById('khachHang').value = '';
+  document.getElementById('donHang').value = '';
+  document.getElementById('quyCach').value = '';
+  document.getElementById('soLuongYeuCau').value = '';
+  document.getElementById('soLuong').value = '';
+  document.getElementById('viTri').value = '';
+  document.getElementById('ghiChu').value = '';
+}
+
+function showStatus(message, type) {
+  const status =
+    document.getElementById('status');
+
+  status.textContent = message;
+
+  status.className =
+    'status ' + type;
+}
+
+function clearStatus() {
+  const status =
+    document.getElementById('status');
+
+  status.textContent = '';
+
+  status.className = 'status';
+}
+</script>
+
+</body>
+</html>
