@@ -53,6 +53,11 @@ button {
   cursor: pointer;
 }
 
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .mode-btn {
   flex: 1;
   background: #ddd;
@@ -484,8 +489,7 @@ function parseQrText(
   ) {
 
     throw new Error(
-      'QR phải có đúng 5 trường:\n' +
-      'Khách Hàng | Đơn Hàng | Mã Lệnh | Quy Cách Đơn Hàng | Số Lượng Yêu Cầu'
+      'QR phải có đúng 5 trường: Khách Hàng | Đơn Hàng | Mã Lệnh | Quy Cách Đơn Hàng | Số Lượng Yêu Cầu'
     );
 
   }
@@ -546,17 +550,11 @@ function parseQrText(
   }
 
   return {
-
     khachHang,
-
     donHang,
-
     maLenh,
-
     quyCach,
-
     soLuongYeuCau
-
   };
 
 }
@@ -905,7 +903,6 @@ async function stopScanner() {
   } catch (error) {
 
     console.log(
-      'Stop scanner:',
       error
     );
 
@@ -948,7 +945,6 @@ async function updateFlashAvailability() {
   } catch (error) {
 
     console.log(
-      'Flash:',
       error
     );
 
@@ -1013,7 +1009,7 @@ async function toggleFlash() {
 function saveData() {
 
   if (
-    scanLocked === false
+    !scanLocked
   ) {
 
     updateStatus(
@@ -1120,10 +1116,9 @@ function saveData() {
   }
 
   const saveBtn =
-    document
-      .getElementById(
-        'saveBtn'
-      );
+    document.getElementById(
+      'saveBtn'
+    );
 
   saveBtn.disabled =
     true;
@@ -1320,9 +1315,7 @@ function handleSaveResponse(
 
   setTimeout(
     () => {
-
       startScanner();
-
     },
     500
   );
