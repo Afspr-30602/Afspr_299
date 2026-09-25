@@ -235,13 +235,6 @@ Sẵn sàng quét QR
 
 <h3>Thông tin đơn hàng</h3>
 
-<label>Mã Lệnh</label>
-
-<input
-  id="maLenh"
-  readonly
->
-
 <label>Khách Hàng</label>
 
 <input
@@ -253,6 +246,13 @@ Sẵn sàng quét QR
 
 <input
   id="donHang"
+  readonly
+>
+
+<label>Mã Lệnh</label>
+
+<input
+  id="maLenh"
   readonly
 >
 
@@ -485,18 +485,18 @@ function parseQrText(
 
     throw new Error(
       'QR phải có đúng 5 trường:\n' +
-      'Mã Lệnh | Khách Hàng | Đơn Hàng | Quy Cách Đơn Hàng | Số Lượng Yêu Cầu'
+      'Khách Hàng | Đơn Hàng | Mã Lệnh | Quy Cách Đơn Hàng | Số Lượng Yêu Cầu'
     );
 
   }
 
-  const maLenh =
+  const khachHang =
     parts[0];
 
-  const khachHang =
+  const donHang =
     parts[1];
 
-  const donHang =
+  const maLenh =
     parts[2];
 
   const quyCach =
@@ -504,14 +504,6 @@ function parseQrText(
 
   const soLuongYeuCau =
     parts[4];
-
-  if (!maLenh) {
-
-    throw new Error(
-      'QR thiếu Mã Lệnh.'
-    );
-
-  }
 
   if (!khachHang) {
 
@@ -525,6 +517,14 @@ function parseQrText(
 
     throw new Error(
       'QR thiếu Đơn Hàng.'
+    );
+
+  }
+
+  if (!maLenh) {
+
+    throw new Error(
+      'QR thiếu Mã Lệnh.'
     );
 
   }
@@ -547,11 +547,11 @@ function parseQrText(
 
   return {
 
-    maLenh,
-
     khachHang,
 
     donHang,
+
+    maLenh,
 
     quyCach,
 
@@ -599,13 +599,6 @@ async function onScanSuccess(
 
     document
       .getElementById(
-        'maLenh'
-      )
-      .value =
-        data.maLenh;
-
-    document
-      .getElementById(
         'khachHang'
       )
       .value =
@@ -617,6 +610,13 @@ async function onScanSuccess(
       )
       .value =
         data.donHang;
+
+    document
+      .getElementById(
+        'maLenh'
+      )
+      .value =
+        data.maLenh;
 
     document
       .getElementById(
@@ -1025,13 +1025,6 @@ function saveData() {
 
   }
 
-  const maLenh =
-    document
-      .getElementById(
-        'maLenh'
-      )
-      .value.trim();
-
   const khachHang =
     document
       .getElementById(
@@ -1043,6 +1036,13 @@ function saveData() {
     document
       .getElementById(
         'donHang'
+      )
+      .value.trim();
+
+  const maLenh =
+    document
+      .getElementById(
+        'maLenh'
       )
       .value.trim();
 
@@ -1159,11 +1159,11 @@ function saveData() {
 
       requestId,
 
-      maLenh,
-
       khachHang,
 
       donHang,
+
+      maLenh,
 
       quyCach,
 
@@ -1276,13 +1276,6 @@ function handleSaveResponse(
 
   document
     .getElementById(
-      'maLenh'
-    )
-    .value =
-      '';
-
-  document
-    .getElementById(
       'khachHang'
     )
     .value =
@@ -1291,6 +1284,13 @@ function handleSaveResponse(
   document
     .getElementById(
       'donHang'
+    )
+    .value =
+      '';
+
+  document
+    .getElementById(
+      'maLenh'
     )
     .value =
       '';
@@ -1334,13 +1334,6 @@ async function clearForm() {
 
   document
     .getElementById(
-      'maLenh'
-    )
-    .value =
-      '';
-
-  document
-    .getElementById(
       'khachHang'
     )
     .value =
@@ -1349,6 +1342,13 @@ async function clearForm() {
   document
     .getElementById(
       'donHang'
+    )
+    .value =
+      '';
+
+  document
+    .getElementById(
+      'maLenh'
     )
     .value =
       '';
