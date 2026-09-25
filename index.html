@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
+
 <meta charset="UTF-8">
 
 <meta
@@ -8,200 +10,156 @@
   content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
 >
 
-<meta
-  name="theme-color"
-  content="#111827"
->
+<title>Kho QR</title>
 
-<link
-  rel="preconnect"
-  href="https://script.google.com"
->
-
-<link
-  rel="preconnect"
-  href="https://unpkg.com"
->
-
-<title>NHẬP XUẤT KHO</title>
-
-<script
-  src="https://unpkg.com/html5-qrcode"
-  type="text/javascript"
-  defer
-></script>
+<script src="https://unpkg.com/html5-qrcode"></script>
 
 <style>
-*{
-  box-sizing:border-box;
+
+* {
+  box-sizing: border-box;
 }
 
-body{
-  margin:0;
-  font-family:Arial,Helvetica,sans-serif;
-  background:#f3f4f6;
-  color:#111827;
+body {
+  margin: 0;
+  padding: 16px;
+  background: #f4f6f8;
+  font-family: Arial, sans-serif;
+  color: #222;
 }
 
-.container{
-  width:100%;
-  max-width:600px;
-  margin:0 auto;
-  padding:16px;
+.container {
+  max-width: 650px;
+  margin: auto;
 }
 
-h1{
-  text-align:center;
-  margin:4px 0 18px;
-  font-size:25px;
+h1 {
+  text-align: center;
+  margin: 8px 0 18px;
 }
 
-.mode-buttons{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
-  margin-bottom:14px;
+.mode-buttons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 14px;
 }
 
-.mode-btn{
-  border:0;
-  border-radius:12px;
-  padding:14px;
-  font-size:17px;
-  font-weight:700;
-  background:#d1d5db;
-  color:#111827;
+button {
+  border: 0;
+  border-radius: 10px;
+  padding: 13px 16px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
 }
 
-.mode-btn.active{
-  background:#111827;
-  color:white;
+.mode-btn {
+  flex: 1;
+  background: #ddd;
 }
 
-.card{
-  background:white;
-  border-radius:14px;
-  padding:16px;
-  margin-bottom:14px;
-  box-shadow:0 2px 8px rgba(0,0,0,.08);
+.mode-btn.active {
+  background: #1677ff;
+  color: white;
 }
 
-.card-title{
-  font-size:18px;
-  font-weight:700;
-  margin-bottom:12px;
+.card {
+  background: white;
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 14px;
+  box-shadow: 0 2px 10px rgba(0,0,0,.08);
 }
 
-label{
-  display:block;
-  font-weight:600;
-  margin:10px 0 6px;
+label {
+  display: block;
+  font-weight: bold;
+  margin: 12px 0 6px;
 }
 
-input{
-  width:100%;
-  padding:12px;
-  border:1px solid #cbd5e1;
-  border-radius:9px;
-  font-size:16px;
-  background:white;
+input,
+textarea {
+  width: 100%;
+  padding: 13px;
+  border: 1px solid #ccc;
+  border-radius: 9px;
+  font-size: 16px;
 }
 
-input[readonly]{
-  background:#f8fafc;
+input[readonly] {
+  background: #f0f2f4;
 }
 
-#readerWrap{
-  position:relative;
-  width:100%;
-  border-radius:14px;
-  overflow:hidden;
-  background:#000;
+textarea {
+  min-height: 80px;
+  resize: vertical;
 }
 
-#reader{
-  width:100%;
-  min-height:280px;
+#reader {
+  width: 100%;
+  overflow: hidden;
+  border-radius: 12px;
 }
 
-#torchBtn{
-  position:absolute;
-  top:12px;
-  right:12px;
-  z-index:20;
-  border:0;
-  border-radius:12px;
-  padding:10px 14px;
-  background:rgba(17,24,39,.78);
-  color:white;
-  font-size:16px;
-  font-weight:700;
-  backdrop-filter:blur(4px);
+.camera-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
 }
 
-#torchBtn.on{
-  background:#f59e0b;
-  color:#111827;
+.camera-buttons button {
+  flex: 1;
 }
 
-#torchBtn:disabled{
-  opacity:.5;
+.primary {
+  width: 100%;
+  background: #1677ff;
+  color: white;
+  margin-top: 16px;
 }
 
-.qr-status{
-  text-align:center;
-  font-size:14px;
-  margin:10px 0 0;
-  color:#475569;
+.danger {
+  width: 100%;
+  background: #e53935;
+  color: white;
+  margin-top: 10px;
 }
 
-.buttons{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
+.flash {
+  background: #ffb300;
+  color: #111;
 }
 
-button.action{
-  border:0;
-  border-radius:10px;
-  padding:14px;
-  font-size:17px;
-  font-weight:700;
+.status {
+  text-align: center;
+  padding: 10px;
+  margin-bottom: 12px;
+  border-radius: 9px;
+  background: #eef2f5;
+  font-weight: bold;
 }
 
-.clear-btn{
-  background:#e5e7eb;
-  color:#111827;
+.success {
+  background: #dff6e4;
+  color: #137333;
 }
 
-.save-btn{
-  background:#2563eb;
-  color:white;
+.error {
+  background: #fde1e1;
+  color: #b42318;
 }
 
-.save-btn:disabled{
-  opacity:.6;
+.hidden {
+  display: none !important;
 }
 
-.error{
-  color:#b91c1c;
-  background:#fee2e2;
-  border-radius:12px;
-  padding:14px;
-  text-align:center;
-  font-weight:700;
-  margin-top:14px;
+.lock-message {
+  text-align: center;
+  margin-top: 10px;
+  font-weight: bold;
+  color: #555;
 }
 
-.success{
-  color:#15803d;
-  background:#dcfce7;
-  border-radius:12px;
-  padding:14px;
-  text-align:center;
-  font-weight:700;
-  margin-top:14px;
-}
 </style>
 
 </head>
@@ -210,205 +168,164 @@ button.action{
 
 <div class="container">
 
-  <h1>NHẬP XUẤT KHO</h1>
+<h1>NHẬP / XUẤT KHO QR</h1>
 
+<div class="mode-buttons">
 
-  <div class="mode-buttons">
+<button
+  id="btnNhap"
+  class="mode-btn active"
+  onclick="setMode('NHAP')"
+>
+NHẬP KHO
+</button>
 
-    <button
-      id="nhapBtn"
-      class="mode-btn active"
-      type="button"
-      onclick="setMode('NHAP')"
-    >
-      NHẬP KHO
-    </button>
-
-    <button
-      id="xuatBtn"
-      class="mode-btn"
-      type="button"
-      onclick="setMode('XUAT')"
-    >
-      XUẤT KHO
-    </button>
-
-  </div>
-
-
-  <div class="card">
-
-    <div class="card-title">
-      Quét mã QR
-    </div>
-
-
-    <div id="readerWrap">
-
-      <div id="reader"></div>
-
-      <button
-        id="torchBtn"
-        type="button"
-        onclick="toggleTorch()"
-      >
-        🔦 FLASH
-      </button>
-
-    </div>
-
-
-    <div
-      id="qrStatus"
-      class="qr-status"
-    >
-      Đang khởi động camera...
-    </div>
-
-  </div>
-
-
-  <div
-    class="card"
-    id="orderInfoCard"
-  >
-
-    <div class="card-title">
-      Thông tin đơn hàng
-    </div>
-
-
-    <label for="maLenh">
-      Mã Lệnh
-    </label>
-
-    <input
-      id="maLenh"
-      type="text"
-      readonly
-    >
-
-
-    <label for="khachHang">
-      Khách Hàng
-    </label>
-
-    <input
-      id="khachHang"
-      type="text"
-      readonly
-    >
-
-
-    <label for="donHang">
-      Đơn Hàng
-    </label>
-
-    <input
-      id="donHang"
-      type="text"
-      readonly
-    >
-
-
-    <label for="quyCach">
-      Quy Cách Đơn Hàng
-    </label>
-
-    <input
-      id="quyCach"
-      type="text"
-      readonly
-    >
-
-
-    <label for="soLuongYeuCau">
-      Số Lượng Yêu Cầu
-    </label>
-
-    <input
-      id="soLuongYeuCau"
-      type="text"
-      readonly
-    >
-
-  </div>
-
-
-  <div class="card">
-
-    <div class="card-title">
-      Thông tin kho
-    </div>
-
-
-    <label
-      id="soLuongLabel"
-      for="soLuong"
-    >
-      Số Lượng Nhập
-    </label>
-
-    <input
-      id="soLuong"
-      type="text"
-      inputmode="decimal"
-      autocomplete="off"
-    >
-
-
-    <label
-      id="viTriLabel"
-      for="viTri"
-    >
-      Vị Trí Nhập
-    </label>
-
-    <input
-      id="viTri"
-      type="text"
-      autocomplete="off"
-    >
-
-
-    <label for="ghiChu">
-      Ghi Chú
-    </label>
-
-    <input
-      id="ghiChu"
-      type="text"
-      autocomplete="off"
-    >
-
-  </div>
-
-
-  <div class="buttons">
-
-    <button
-      class="action clear-btn"
-      type="button"
-      onclick="clearForm()"
-    >
-      XÓA
-    </button>
-
-    <button
-      class="action save-btn"
-      type="button"
-      onclick="saveData()"
-    >
-      💾 GHI DỮ LIỆU
-    </button>
-
-  </div>
-
-
-  <div id="message"></div>
+<button
+  id="btnXuat"
+  class="mode-btn"
+  onclick="setMode('XUAT')"
+>
+XUẤT KHO
+</button>
 
 </div>
 
+<div
+  id="status"
+  class="status"
+>
+Sẵn sàng quét QR
+</div>
+
+<div class="card">
+
+<div id="reader"></div>
+
+<div class="camera-buttons">
+
+<button
+  id="flashBtn"
+  class="flash"
+  onclick="toggleFlash()"
+>
+🔦 Flash
+</button>
+
+<button
+  onclick="startScanner()"
+>
+📷 Quét lại
+</button>
+
+</div>
+
+<div
+  id="lockMessage"
+  class="lock-message hidden"
+>
+Đã quét — camera đã khóa
+</div>
+
+</div>
+
+<div
+  id="orderInfoCard"
+  class="card"
+>
+
+<h3>Thông tin đơn hàng</h3>
+
+<label>Mã Lệnh</label>
+
+<input
+  id="maLenh"
+  readonly
+>
+
+<label>Khách Hàng</label>
+
+<input
+  id="khachHang"
+  readonly
+>
+
+<label>Đơn Hàng</label>
+
+<input
+  id="donHang"
+  readonly
+>
+
+<label>Quy Cách Đơn Hàng</label>
+
+<input
+  id="quyCach"
+  readonly
+>
+
+<label>Số Lượng Yêu Cầu</label>
+
+<input
+  id="soLuongYeuCau"
+  readonly
+>
+
+</div>
+
+<div class="card">
+
+<h3 id="quantityTitle">
+Thông tin nhập kho
+</h3>
+
+<label id="quantityLabel">
+Số Lượng Nhập
+</label>
+
+<input
+  id="soLuong"
+  type="text"
+  inputmode="decimal"
+  placeholder="Nhập số lượng"
+>
+
+<label id="locationLabel">
+Vị Trí Nhập
+</label>
+
+<input
+  id="viTri"
+  type="text"
+  placeholder="Ví dụ: A01-01"
+>
+
+<label>
+Ghi Chú
+</label>
+
+<textarea
+  id="ghiChu"
+  placeholder="Ghi chú nếu có..."
+></textarea>
+
+<button
+  id="saveBtn"
+  class="primary"
+  onclick="saveData()"
+>
+💾 LƯU DỮ LIỆU
+</button>
+
+<button
+  class="danger"
+  onclick="clearForm()"
+>
+🗑 XÓA
+</button>
+
+</div>
+
+</div>
 
 <script>
 
@@ -418,162 +335,227 @@ const API_URL =
 const API_TOKEN =
   'QR_KHO_2026';
 
+let currentMode =
+  'NHAP';
 
-let currentMode = 'NHAP';
+let scanner =
+  null;
 
-let html5QrCode = null;
+let scannerRunning =
+  false;
 
-let scannerRunning = false;
+let scanLocked =
+  false;
 
-let scannerStarting = false;
+let flashOn =
+  false;
 
-let scanLocked = false;
+let currentCameraId =
+  null;
 
-let torchOn = false;
+const statusEl =
+  document.getElementById(
+    'status'
+  );
 
-
-const fields = {
-
-  maLenh:
-    document.getElementById('maLenh'),
-
-  khachHang:
-    document.getElementById('khachHang'),
-
-  donHang:
-    document.getElementById('donHang'),
-
-  quyCach:
-    document.getElementById('quyCach'),
-
-  soLuongYeuCau:
-    document.getElementById('soLuongYeuCau'),
-
-  soLuong:
-    document.getElementById('soLuong'),
-
-  viTri:
-    document.getElementById('viTri'),
-
-  ghiChu:
-    document.getElementById('ghiChu')
-
-};
+const lockMessageEl =
+  document.getElementById(
+    'lockMessage'
+  );
 
 
-function setMode(mode) {
+function setMode(
+  mode
+) {
 
   currentMode =
     mode;
 
-
   document
-    .getElementById('nhapBtn')
-    .classList
-    .toggle(
+    .getElementById(
+      'btnNhap'
+    )
+    .classList.toggle(
       'active',
       mode === 'NHAP'
     );
 
-
   document
-    .getElementById('xuatBtn')
-    .classList
-    .toggle(
+    .getElementById(
+      'btnXuat'
+    )
+    .classList.toggle(
       'active',
       mode === 'XUAT'
     );
 
+  document
+    .getElementById(
+      'quantityTitle'
+    )
+    .textContent =
+      mode === 'NHAP'
+        ? 'Thông tin nhập kho'
+        : 'Thông tin xuất kho';
 
   document
-    .getElementById('soLuongLabel')
+    .getElementById(
+      'quantityLabel'
+    )
     .textContent =
       mode === 'NHAP'
         ? 'Số Lượng Nhập'
         : 'Số Lượng Xuất';
 
-
   document
-    .getElementById('viTriLabel')
+    .getElementById(
+      'locationLabel'
+    )
     .textContent =
       mode === 'NHAP'
         ? 'Vị Trí Nhập'
         : 'Vị Trí Xuất';
 
-
-  clearMessage();
+  updateStatus(
+    'Đã chọn ' +
+    (
+      mode === 'NHAP'
+        ? 'NHẬP KHO'
+        : 'XUẤT KHO'
+    ) +
+    '. Sẵn sàng quét QR.',
+    ''
+  );
 
 }
 
 
-function parseQrText(text) {
+function updateStatus(
+  message,
+  type
+) {
+
+  statusEl.textContent =
+    message;
+
+  statusEl.className =
+    'status';
+
+  if (type) {
+
+    statusEl.classList.add(
+      type
+    );
+
+  }
+
+}
+
+
+function createRequestId() {
+
+  return (
+    Date.now().toString(36) +
+    '_' +
+    Math.random()
+      .toString(36)
+      .substring(2, 12)
+  );
+
+}
+
+
+function parseQrText(
+  text
+) {
 
   const parts =
-    String(text || '')
-      .split('|')
-      .map(
-        v => v.trim()
-      );
-
+    String(
+      text || ''
+    )
+    .split('|')
+    .map(
+      value =>
+        value.trim()
+    );
 
   if (
     parts.length !== 5
   ) {
 
     throw new Error(
-      'Mã QR phải có đúng 5 trường.'
+      'QR phải có đúng 5 trường:\n' +
+      'Mã Lệnh | Khách Hàng | Đơn Hàng | Quy Cách Đơn Hàng | Số Lượng Yêu Cầu'
     );
 
   }
 
+  const maLenh =
+    parts[0];
 
-  if (
-    parts.some(
-      v => !v
-    )
-  ) {
+  const khachHang =
+    parts[1];
+
+  const donHang =
+    parts[2];
+
+  const quyCach =
+    parts[3];
+
+  const soLuongYeuCau =
+    parts[4];
+
+  if (!maLenh) {
 
     throw new Error(
-      'Mã QR đang thiếu thông tin.'
+      'QR thiếu Mã Lệnh.'
     );
 
   }
 
-
-  const quantity =
-    parseNumber(
-      parts[4]
-    );
-
-
-  if (
-    quantity === null ||
-    quantity <= 0
-  ) {
+  if (!khachHang) {
 
     throw new Error(
-      'Số Lượng Yêu Cầu trong QR không hợp lệ.'
+      'QR thiếu Khách Hàng.'
     );
 
   }
 
+  if (!donHang) {
+
+    throw new Error(
+      'QR thiếu Đơn Hàng.'
+    );
+
+  }
+
+  if (!quyCach) {
+
+    throw new Error(
+      'QR thiếu Quy Cách Đơn Hàng.'
+    );
+
+  }
+
+  if (!soLuongYeuCau) {
+
+    throw new Error(
+      'QR thiếu Số Lượng Yêu Cầu.'
+    );
+
+  }
 
   return {
 
-    maLenh:
-      parts[0],
+    maLenh,
 
-    khachHang:
-      parts[1],
+    khachHang,
 
-    donHang:
-      parts[2],
+    donHang,
 
-    quyCach:
-      parts[3],
+    quyCach,
 
-    soLuongYeuCau:
-      parts[4]
+    soLuongYeuCau
 
   };
 
@@ -592,6 +574,19 @@ async function onScanSuccess(
 
   }
 
+  scanLocked =
+    true;
+
+  lockMessageEl
+    .classList
+    .remove(
+      'hidden'
+    );
+
+  updateStatus(
+    'Đã quét QR. Đang đọc dữ liệu...',
+    ''
+  );
 
   try {
 
@@ -600,83 +595,85 @@ async function onScanSuccess(
         decodedText
       );
 
-
-    scanLocked =
-      true;
-
-
-    fields.maLenh.value =
-      data.maLenh;
-
-    fields.khachHang.value =
-      data.khachHang;
-
-    fields.donHang.value =
-      data.donHang;
-
-    fields.quyCach.value =
-      data.quyCach;
-
-    fields.soLuongYeuCau.value =
-      data.soLuongYeuCau;
-
-
-    document
-      .getElementById('qrStatus')
-      .textContent =
-        '✓ Đã quét QR — camera đã khóa';
-
-
-    showSuccess(
-      'Đã nhận dữ liệu từ QR.'
-    );
-
-
     await stopScanner();
 
+    document
+      .getElementById(
+        'maLenh'
+      )
+      .value =
+        data.maLenh;
 
-    const orderCard =
+    document
+      .getElementById(
+        'khachHang'
+      )
+      .value =
+        data.khachHang;
+
+    document
+      .getElementById(
+        'donHang'
+      )
+      .value =
+        data.donHang;
+
+    document
+      .getElementById(
+        'quyCach'
+      )
+      .value =
+        data.quyCach;
+
+    document
+      .getElementById(
+        'soLuongYeuCau'
+      )
+      .value =
+        data.soLuongYeuCau;
+
+    updateStatus(
+      'Quét thành công. Vui lòng nhập số lượng và vị trí.',
+      'success'
+    );
+
+    const card =
       document.getElementById(
         'orderInfoCard'
       );
 
-
-    if (
-      orderCard
-    ) {
-
-      orderCard.scrollIntoView({
-
-        behavior:
-          'smooth',
-
-        block:
-          'start'
-
-      });
-
-    }
-
+    card.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start'
+    });
 
     setTimeout(
       () => {
 
-        fields.soLuong.focus();
+        document
+          .getElementById(
+            'soLuong'
+          )
+          .focus();
 
       },
       500
     );
-
 
   } catch (error) {
 
     scanLocked =
       false;
 
+    lockMessageEl
+      .classList
+      .add(
+        'hidden'
+      );
 
-    showError(
-      error.message ||
-      'QR không hợp lệ.'
+    updateStatus(
+      error.message,
+      'error'
     );
 
   }
@@ -684,48 +681,52 @@ async function onScanSuccess(
 }
 
 
-function scannerConfig() {
-
-  return {
-
-    fps:
-      15,
-
-    qrbox:
-      function(
-        viewfinderWidth,
-        viewfinderHeight
-      ) {
-
-        const size =
-          Math.floor(
-            Math.min(
-              viewfinderWidth * 0.68,
-              viewfinderHeight * 0.68,
-              330
-            )
-          );
+function onScanFailure(
+  errorMessage
+) {}
 
 
-        return {
+async function getRearCamera() {
 
-          width:
-            size,
+  const cameras =
+    await Html5Qrcode
+      .getCameras();
 
-          height:
-            size
+  if (
+    !cameras ||
+    cameras.length === 0
+  ) {
 
-        };
+    throw new Error(
+      'Không tìm thấy camera.'
+    );
 
-      },
+  }
 
-    aspectRatio:
-      1.333333,
+  const preferred =
+    cameras.find(
+      camera => {
 
-    disableFlip:
-      true
+        const label =
+          String(
+            camera.label || ''
+          )
+          .toLowerCase();
 
-  };
+        return (
+          label.includes('back') ||
+          label.includes('rear') ||
+          label.includes('environment') ||
+          label.includes('sau')
+        );
+
+      }
+    );
+
+  return (
+    preferred ||
+    cameras[cameras.length - 1]
+  );
 
 }
 
@@ -733,302 +734,150 @@ function scannerConfig() {
 async function startScanner() {
 
   if (
-    scannerRunning ||
-    scannerStarting
+    scannerRunning
   ) {
 
     return;
 
   }
-
-
-  if (
-    typeof Html5Qrcode ===
-    'undefined'
-  ) {
-
-    showError(
-      'Đang tải bộ quét QR, vui lòng thử lại.'
-    );
-
-    return;
-
-  }
-
-
-  scannerStarting =
-    true;
-
 
   scanLocked =
     false;
 
-
-  torchOn =
-    false;
-
-
-  const reader =
-    document.getElementById(
-      'reader'
-    );
-
-
-  reader.innerHTML =
-    '';
-
-
-  const torchButton =
-    document.getElementById(
-      'torchBtn'
-    );
-
-
-  torchButton
+  lockMessageEl
     .classList
-    .remove(
-      'on'
+    .add(
+      'hidden'
     );
 
-
-  torchButton.textContent =
-    '🔦 FLASH';
-
-
-  torchButton.disabled =
-    true;
-
-
-  html5QrCode =
-    new Html5Qrcode(
-      'reader',
-      {
-
-        formatsToSupport: [
-
-          Html5QrcodeSupportedFormats
-            .QR_CODE
-
-        ],
-
-        useBarCodeDetectorIfSupported:
-          true,
-
-        verbose:
-          false
-
-      }
-    );
-
+  updateStatus(
+    'Đang mở camera...',
+    ''
+  );
 
   try {
 
-    const cameras =
-      await Html5Qrcode
-        .getCameras();
+    if (!scanner) {
 
-
-    if (
-      !cameras ||
-      cameras.length === 0
-    ) {
-
-      throw new Error(
-        'Không tìm thấy camera.'
-      );
-
-    }
-
-
-    let backCameraId =
-      null;
-
-
-    for (
-      const camera of cameras
-    ) {
-
-      const label =
-        String(
-          camera.label || ''
-        )
-        .toLowerCase();
-
-
-      if (
-
-        label.includes('back') ||
-
-        label.includes('rear') ||
-
-        label.includes('environment') ||
-
-        label.includes('world')
-
-      ) {
-
-        backCameraId =
-          camera.id;
-
-        break;
-
-      }
-
-    }
-
-
-    let started =
-      false;
-
-
-    if (
-      backCameraId
-    ) {
-
-      try {
-
-        await html5QrCode.start(
-
-          backCameraId,
-
-          scannerConfig(),
-
-          onScanSuccess,
-
-          function() {}
-
+      scanner =
+        new Html5Qrcode(
+          'reader'
         );
 
-
-        started =
-          true;
-
-
-      } catch (
-        error
-      ) {}
-
     }
 
+    const camera =
+      await getRearCamera();
 
-    if (
-      !started
-    ) {
+    currentCameraId =
+      camera.id;
 
-      try {
+    await scanner.start(
 
-        await html5QrCode.start(
+      {
+        deviceId: {
+          exact:
+            currentCameraId
+        }
+      },
 
-          {
-            facingMode: {
-              exact:
-                'environment'
-            }
-          },
+      {
+        fps: 10,
 
-          scannerConfig(),
+        qrbox: function(
+          viewfinderWidth,
+          viewfinderHeight
+        ) {
 
-          onScanSuccess,
+          const size =
+            Math.min(
+              viewfinderWidth,
+              viewfinderHeight
+            ) * 0.72;
 
-          function() {}
+          return {
+            width: size,
+            height: size
+          };
 
-        );
+        },
 
+        aspectRatio: 1.0
 
-        started =
-          true;
+      },
 
+      onScanSuccess,
 
-      } catch (
-        error
-      ) {}
+      onScanFailure
 
-    }
-
-
-    if (
-      !started
-    ) {
-
-      try {
-
-        await html5QrCode.start(
-
-          {
-            facingMode:
-              'environment'
-          },
-
-          scannerConfig(),
-
-          onScanSuccess,
-
-          function() {}
-
-        );
-
-
-        started =
-          true;
-
-
-      } catch (
-        error
-      ) {}
-
-    }
-
-
-    if (
-      !started
-    ) {
-
-      throw new Error(
-        'Không thể mở camera sau trên thiết bị này.'
-      );
-
-    }
-
+    );
 
     scannerRunning =
       true;
 
-
-    scannerStarting =
-      false;
-
-
-    document
-      .getElementById('qrStatus')
-      .textContent =
-        'Đưa mã QR vào khung để quét';
-
-
-    updateTorchAvailability();
-
-
-  } catch (
-    error
-  ) {
-
-    scannerRunning =
-      false;
-
-
-    scannerStarting =
-      false;
-
-
-    document
-      .getElementById('qrStatus')
-      .textContent =
-        'Không thể mở camera.';
-
-
-    showError(
-      error.message ||
-      'Không thể mở camera.'
+    updateStatus(
+      'Đưa mã QR vào khung để quét.',
+      ''
     );
+
+    await updateFlashAvailability();
+
+  } catch (error) {
+
+    try {
+
+      if (!scanner) {
+
+        scanner =
+          new Html5Qrcode(
+            'reader'
+          );
+
+      }
+
+      await scanner.start(
+
+        {
+          facingMode: {
+            exact:
+              'environment'
+          }
+        },
+
+        {
+          fps: 10,
+          qrbox: 250,
+          aspectRatio: 1.0
+        },
+
+        onScanSuccess,
+
+        onScanFailure
+
+      );
+
+      scannerRunning =
+        true;
+
+      updateStatus(
+        'Đang sử dụng camera sau.',
+        ''
+      );
+
+      await updateFlashAvailability();
+
+    } catch (error2) {
+
+      scannerRunning =
+        false;
+
+      updateStatus(
+        'Không thể mở camera: ' +
+        error2.message,
+        'error'
+      );
+
+    }
 
   }
 
@@ -1038,235 +887,122 @@ async function startScanner() {
 async function stopScanner() {
 
   if (
-    !html5QrCode
-  ) {
-
-    return;
-
-  }
-
-
-  if (
+    !scanner ||
     !scannerRunning
   ) {
 
+    scannerRunning =
+      false;
+
     return;
 
   }
 
-
   try {
 
-    if (
-      torchOn
-    ) {
+    await scanner.stop();
 
-      await html5QrCode
+  } catch (error) {
 
-        .applyVideoConstraints({
+    console.log(
+      'Stop scanner:',
+      error
+    );
 
-          advanced: [
-
-            {
-              torch:
-                false
-            }
-
-          ]
-
-        })
-
-        .catch(
-          () => {}
-        );
-
-    }
-
-  } catch (
-    e
-  ) {}
-
-
-  try {
-
-    await html5QrCode.stop();
-
-  } catch (
-    e
-  ) {}
-
+  }
 
   scannerRunning =
     false;
 
-
-  torchOn =
-    false;
-
-
-  const torchButton =
-    document.getElementById(
-      'torchBtn'
-    );
-
-
-  torchButton
-    .classList
-    .remove(
-      'on'
-    );
-
-
-  torchButton.textContent =
-    '🔦 FLASH';
-
-
-  torchButton.disabled =
-    true;
-
-
-  try {
-
-    await html5QrCode.clear();
-
-  } catch (
-    e
-  ) {}
-
-
-  html5QrCode =
-    null;
-
 }
 
 
-function updateTorchAvailability() {
-
-  const button =
-    document.getElementById(
-      'torchBtn'
-    );
-
-
-  button.disabled =
-    true;
-
+async function updateFlashAvailability() {
 
   try {
 
     if (
-      !html5QrCode ||
-      !scannerRunning
+      !scanner ||
+      !scanner.getRunningTrackCapabilities
     ) {
 
       return;
 
     }
 
-
     const capabilities =
-      html5QrCode
+      scanner
         .getRunningTrackCapabilities();
 
-
-    if (
+    const flashSupported =
       capabilities &&
-      capabilities.torch
-    ) {
+      capabilities.torch;
 
-      button.disabled =
-        false;
+    document
+      .getElementById(
+        'flashBtn'
+      )
+      .disabled =
+        !flashSupported;
 
-    }
+  } catch (error) {
 
-  } catch (
-    error
-  ) {
-
-    button.disabled =
-      true;
+    console.log(
+      'Flash:',
+      error
+    );
 
   }
 
 }
 
 
-async function toggleTorch() {
+async function toggleFlash() {
 
   if (
-    !html5QrCode ||
+    !scanner ||
     !scannerRunning
   ) {
 
-    return;
-
-  }
-
-
-  const button =
-    document.getElementById(
-      'torchBtn'
-    );
-
-
-  if (
-    button.disabled
-  ) {
-
-    showError(
-      'Thiết bị hoặc trình duyệt không hỗ trợ đèn flash.'
+    updateStatus(
+      'Camera chưa hoạt động.',
+      'error'
     );
 
     return;
 
   }
-
 
   try {
 
-    const newState =
-      !torchOn;
+    await scanner.applyVideoConstraints({
 
+      advanced: [
+        {
+          torch:
+            !flashOn
+        }
+      ]
 
-    await html5QrCode
-      .applyVideoConstraints({
+    });
 
-        advanced: [
+    flashOn =
+      !flashOn;
 
-          {
-            torch:
-              newState
-          }
+    document
+      .getElementById(
+        'flashBtn'
+      )
+      .textContent =
+        flashOn
+          ? '🔦 Tắt Flash'
+          : '🔦 Flash';
 
-        ]
+  } catch (error) {
 
-      });
-
-
-    torchOn =
-      newState;
-
-
-    button
-      .classList
-      .toggle(
-        'on',
-        torchOn
-      );
-
-
-    button.textContent =
-      torchOn
-        ? '🔆 TẮT FLASH'
-        : '🔦 FLASH';
-
-
-  } catch (
-    error
-  ) {
-
-    showError(
-      'Không thể bật/tắt đèn flash trên thiết bị này.'
+    updateStatus(
+      'Thiết bị không hỗ trợ Flash.',
+      'error'
     );
 
   }
@@ -1274,641 +1010,397 @@ async function toggleTorch() {
 }
 
 
-function parseNumber(value) {
+function saveData() {
 
-  const text =
-    String(
-      value || ''
-    )
-    .trim()
-    .replace(
-      /,/g,
-      '.'
+  if (
+    scanLocked === false
+  ) {
+
+    updateStatus(
+      'Vui lòng quét QR trước.',
+      'error'
     );
 
-
-  if (
-    !text
-  ) {
-
-    return null;
+    return;
 
   }
-
-
-  if (
-    !/^\d+(?:\.\d+)?$/
-      .test(text)
-  ) {
-
-    return null;
-
-  }
-
-
-  const number =
-    Number(
-      text
-    );
-
-
-  if (
-    !Number.isFinite(
-      number
-    )
-  ) {
-
-    return null;
-
-  }
-
-
-  return number;
-
-}
-
-
-function createRequestId() {
-
-  if (
-
-    window.crypto &&
-
-    typeof window.crypto
-      .randomUUID ===
-      'function'
-
-  ) {
-
-    return window.crypto
-      .randomUUID();
-
-  }
-
-
-  return (
-
-    Date.now() +
-
-    '_' +
-
-    Math.random()
-      .toString(36)
-      .substring(2) +
-
-    '_' +
-
-    Math.random()
-      .toString(36)
-      .substring(2)
-
-  );
-
-}
-
-
-function callAppsScript(
-  params
-) {
-
-  return new Promise(
-    (
-      resolve,
-      reject
-    ) => {
-
-      const callbackName =
-        'qrKhoCallback_' +
-        Date.now() +
-        '_' +
-        Math.floor(
-          Math.random() *
-          1000000
-        );
-
-
-      params.set(
-        'callback',
-        callbackName
-      );
-
-
-      const script =
-        document.createElement(
-          'script'
-        );
-
-
-      let finished =
-        false;
-
-
-      const cleanup =
-        () => {
-
-          if (
-            script.parentNode
-          ) {
-
-            script.parentNode
-              .removeChild(
-                script
-              );
-
-          }
-
-
-          try {
-
-            delete window[
-              callbackName
-            ];
-
-          } catch (
-            e
-          ) {
-
-            window[
-              callbackName
-            ] =
-              undefined;
-
-          }
-
-        };
-
-
-      const timer =
-        setTimeout(
-          () => {
-
-            if (
-              finished
-            ) {
-
-              return;
-
-            }
-
-
-            finished =
-              true;
-
-
-            cleanup();
-
-
-            reject(
-
-              new Error(
-                'Hết thời gian chờ hệ thống.'
-              )
-
-            );
-
-          },
-          15000
-        );
-
-
-      window[
-        callbackName
-      ] =
-        function(
-          result
-        ) {
-
-          if (
-            finished
-          ) {
-
-            return;
-
-          }
-
-
-          finished =
-            true;
-
-
-          clearTimeout(
-            timer
-          );
-
-
-          cleanup();
-
-
-          resolve(
-            result
-          );
-
-        };
-
-
-      script.onerror =
-        function() {
-
-          if (
-            finished
-          ) {
-
-            return;
-
-          }
-
-
-          finished =
-            true;
-
-
-          clearTimeout(
-            timer
-          );
-
-
-          cleanup();
-
-
-          reject(
-
-            new Error(
-              'Không thể kết nối với hệ thống.'
-            )
-
-          );
-
-        };
-
-
-      script.async =
-        true;
-
-
-      script.src =
-        API_URL +
-        '?' +
-        params.toString();
-
-
-      document.body
-        .appendChild(
-          script
-        );
-
-    }
-  );
-
-}
-
-
-async function saveData() {
-
-  clearMessage();
-
 
   const maLenh =
-    fields.maLenh.value.trim();
+    document
+      .getElementById(
+        'maLenh'
+      )
+      .value.trim();
 
   const khachHang =
-    fields.khachHang.value.trim();
+    document
+      .getElementById(
+        'khachHang'
+      )
+      .value.trim();
 
   const donHang =
-    fields.donHang.value.trim();
+    document
+      .getElementById(
+        'donHang'
+      )
+      .value.trim();
 
   const quyCach =
-    fields.quyCach.value.trim();
+    document
+      .getElementById(
+        'quyCach'
+      )
+      .value.trim();
 
   const soLuongYeuCau =
-    fields.soLuongYeuCau
-      .value
-      .trim();
+    document
+      .getElementById(
+        'soLuongYeuCau'
+      )
+      .value.trim();
 
   const soLuong =
-    fields.soLuong.value.trim();
+    document
+      .getElementById(
+        'soLuong'
+      )
+      .value.trim();
 
   const viTri =
-    fields.viTri.value.trim();
+    document
+      .getElementById(
+        'viTri'
+      )
+      .value.trim();
 
   const ghiChu =
-    fields.ghiChu.value.trim();
+    document
+      .getElementById(
+        'ghiChu'
+      )
+      .value.trim();
 
+  if (!soLuong) {
 
-  if (
-
-    !maLenh ||
-
-    !khachHang ||
-
-    !donHang ||
-
-    !quyCach ||
-
-    !soLuongYeuCau
-
-  ) {
-
-    showError(
-      'Vui lòng quét QR đầy đủ thông tin.'
-    );
-
-    return;
-
-  }
-
-
-  if (
-    !soLuong
-  ) {
-
-    showError(
-
+    updateStatus(
       currentMode === 'NHAP'
-
         ? 'Vui lòng nhập Số Lượng Nhập.'
-
-        : 'Vui lòng nhập Số Lượng Xuất.'
-
+        : 'Vui lòng nhập Số Lượng Xuất.',
+      'error'
     );
+
+    document
+      .getElementById(
+        'soLuong'
+      )
+      .focus();
 
     return;
 
   }
 
+  if (!viTri) {
 
-  const quantity =
-    parseNumber(
-      soLuong
-    );
-
-
-  if (
-    quantity === null ||
-    quantity <= 0
-  ) {
-
-    showError(
-
+    updateStatus(
       currentMode === 'NHAP'
-
-        ? 'Số Lượng Nhập không hợp lệ.'
-
-        : 'Số Lượng Xuất không hợp lệ.'
-
-    );
-
-    return;
-
-  }
-
-
-  if (
-    !viTri
-  ) {
-
-    showError(
-
-      currentMode === 'NHAP'
-
         ? 'Vui lòng nhập Vị Trí Nhập.'
-
-        : 'Vui lòng nhập Vị Trí Xuất.'
-
+        : 'Vui lòng nhập Vị Trí Xuất.',
+      'error'
     );
+
+    document
+      .getElementById(
+        'viTri'
+      )
+      .focus();
 
     return;
 
   }
 
+  const saveBtn =
+    document
+      .getElementById(
+        'saveBtn'
+      );
 
-  const saveButton =
-    document.querySelector(
-      '.save-btn'
-    );
-
-
-  saveButton.disabled =
+  saveBtn.disabled =
     true;
 
+  saveBtn.textContent =
+    '⏳ ĐANG LƯU...';
 
-  saveButton.textContent =
-    'ĐANG GHI...';
+  updateStatus(
+    'Đang gửi dữ liệu...',
+    ''
+  );
 
+  const requestId =
+    createRequestId();
 
   const params =
-    new URLSearchParams();
+    new URLSearchParams({
 
+      token:
+        API_TOKEN,
 
-  params.set(
-    'token',
-    API_TOKEN
-  );
+      action:
+        'save',
 
+      callback:
+        'handleSaveResponse',
 
-  params.set(
-    'action',
-    'save'
-  );
+      mode:
+        currentMode,
 
+      source:
+        'QR',
 
-  params.set(
-    'mode',
-    currentMode
-  );
+      requestId,
 
+      maLenh,
 
-  params.set(
-    'source',
-    'QR'
-  );
+      khachHang,
 
+      donHang,
 
-  params.set(
-    'requestId',
-    createRequestId()
-  );
+      quyCach,
 
+      soLuongYeuCau,
 
-  params.set(
-    'maLenh',
-    maLenh
-  );
+      soLuong,
 
+      viTri,
 
-  params.set(
-    'khachHang',
-    khachHang
-  );
+      ghiChu
 
+    });
 
-  params.set(
-    'donHang',
-    donHang
-  );
+  const script =
+    document.createElement(
+      'script'
+    );
 
+  script.src =
+    API_URL +
+    '?' +
+    params.toString();
 
-  params.set(
-    'quyCach',
-    quyCach
-  );
+  script.onerror =
+    function() {
 
-
-  params.set(
-    'soLuongYeuCau',
-    soLuongYeuCau
-  );
-
-
-  params.set(
-    'soLuong',
-    soLuong
-  );
-
-
-  params.set(
-    'viTri',
-    viTri
-  );
-
-
-  params.set(
-    'ghiChu',
-    ghiChu
-  );
-
-
-  try {
-
-    const result =
-      await callAppsScript(
-        params
-      );
-
-
-    if (
-      result &&
-      result.success
-    ) {
-
-      showSuccess(
-
-        result.message ||
-
-        'Đã ghi dữ liệu thành công.'
-
-      );
-
-
-      fields.soLuong.value =
-        '';
-
-      fields.viTri.value =
-        '';
-
-      fields.ghiChu.value =
-        '';
-
-
-      scanLocked =
+      saveBtn.disabled =
         false;
 
+      saveBtn.textContent =
+        '💾 LƯU DỮ LIỆU';
 
-      document
-        .getElementById(
-          'qrStatus'
-        )
-        .textContent =
-          'Đang mở camera để quét mã tiếp theo...';
+      updateStatus(
+        'Không thể kết nối với hệ thống.',
+        'error'
+      );
 
+      script.remove();
 
-      await startScanner();
+    };
 
-
-      return;
-
-    }
-
-
-    showError(
-
-      result &&
-      result.message
-
-        ? result.message
-
-        : 'Không thể ghi dữ liệu.'
-
+  document
+    .body
+    .appendChild(
+      script
     );
 
+}
 
-  } catch (
-    error
+
+function handleSaveResponse(
+  result
+) {
+
+  const saveBtn =
+    document
+      .getElementById(
+        'saveBtn'
+      );
+
+  saveBtn.disabled =
+    false;
+
+  saveBtn.textContent =
+    '💾 LƯU DỮ LIỆU';
+
+  if (
+    !result ||
+    !result.success
   ) {
 
-    showError(
-
-      error.message ||
-
-      'Không thể kết nối với hệ thống.'
-
+    updateStatus(
+      result &&
+      result.message
+        ? result.message
+        : 'Lưu dữ liệu thất bại.',
+      'error'
     );
 
-
-  } finally {
-
-    saveButton.disabled =
-      false;
-
-
-    saveButton.textContent =
-      '💾 GHI DỮ LIỆU';
+    return;
 
   }
+
+  updateStatus(
+    result.message ||
+    'Đã lưu thành công.',
+    'success'
+  );
+
+  document
+    .getElementById(
+      'soLuong'
+    )
+    .value =
+      '';
+
+  document
+    .getElementById(
+      'viTri'
+    )
+    .value =
+      '';
+
+  document
+    .getElementById(
+      'ghiChu'
+    )
+    .value =
+      '';
+
+  document
+    .getElementById(
+      'maLenh'
+    )
+    .value =
+      '';
+
+  document
+    .getElementById(
+      'khachHang'
+    )
+    .value =
+      '';
+
+  document
+    .getElementById(
+      'donHang'
+    )
+    .value =
+      '';
+
+  document
+    .getElementById(
+      'quyCach'
+    )
+    .value =
+      '';
+
+  document
+    .getElementById(
+      'soLuongYeuCau'
+    )
+    .value =
+      '';
+
+  scanLocked =
+    false;
+
+  lockMessageEl
+    .classList
+    .add(
+      'hidden'
+    );
+
+  setTimeout(
+    () => {
+
+      startScanner();
+
+    },
+    500
+  );
 
 }
 
 
 async function clearForm() {
 
-  fields.maLenh.value =
-    '';
+  document
+    .getElementById(
+      'maLenh'
+    )
+    .value =
+      '';
 
-  fields.khachHang.value =
-    '';
+  document
+    .getElementById(
+      'khachHang'
+    )
+    .value =
+      '';
 
-  fields.donHang.value =
-    '';
+  document
+    .getElementById(
+      'donHang'
+    )
+    .value =
+      '';
 
-  fields.quyCach.value =
-    '';
+  document
+    .getElementById(
+      'quyCach'
+    )
+    .value =
+      '';
 
-  fields.soLuongYeuCau.value =
-    '';
+  document
+    .getElementById(
+      'soLuongYeuCau'
+    )
+    .value =
+      '';
 
-  fields.soLuong.value =
-    '';
+  document
+    .getElementById(
+      'soLuong'
+    )
+    .value =
+      '';
 
-  fields.viTri.value =
-    '';
+  document
+    .getElementById(
+      'viTri'
+    )
+    .value =
+      '';
 
-  fields.ghiChu.value =
-    '';
-
-
-  clearMessage();
-
+  document
+    .getElementById(
+      'ghiChu'
+    )
+    .value =
+      '';
 
   scanLocked =
     false;
 
+  lockMessageEl
+    .classList
+    .add(
+      'hidden'
+    );
 
-  document
-    .getElementById(
-      'qrStatus'
-    )
-    .textContent =
-      'Đang mở camera...';
-
+  updateStatus(
+    'Đã xóa. Sẵn sàng quét QR.',
+    ''
+  );
 
   if (
     !scannerRunning
@@ -1921,67 +1413,9 @@ async function clearForm() {
 }
 
 
-function showError(
-  message
-) {
-
-  const el =
-    document.getElementById(
-      'message'
-    );
-
-
-  el.className =
-    'error';
-
-
-  el.textContent =
-    message;
-
-}
-
-
-function showSuccess(
-  message
-) {
-
-  const el =
-    document.getElementById(
-      'message'
-    );
-
-
-  el.className =
-    'success';
-
-
-  el.textContent =
-    message;
-
-}
-
-
-function clearMessage() {
-
-  const el =
-    document.getElementById(
-      'message'
-    );
-
-
-  el.className =
-    '';
-
-
-  el.textContent =
-    '';
-
-}
-
-
 window.addEventListener(
   'load',
-  () => {
+  function() {
 
     setMode(
       'NHAP'
@@ -1995,4 +1429,5 @@ window.addEventListener(
 </script>
 
 </body>
+
 </html>
