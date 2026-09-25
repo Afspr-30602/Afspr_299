@@ -322,6 +322,7 @@ Ghi Chú
 </button>
 
 <button
+  id="clearBtn"
   class="danger"
   onclick="clearForm()"
 >
@@ -357,6 +358,27 @@ let flashOn =
 
 let currentCameraId =
   null;
+
+let saveInProgress =
+  false;
+
+let pendingRequestId =
+  '';
+
+let saveTimeoutId =
+  null;
+
+let saveAttempt =
+  0;
+
+const SAVE_TIMEOUT_MS =
+  15000;
+
+const SAVE_RETRY_DELAY_MS =
+  1200;
+
+const MAX_SAVE_ATTEMPTS =
+  3;
 
 const statusEl =
   document.getElementById(
@@ -1006,7 +1028,12 @@ async function toggleFlash() {
 }
 
 
+
 function saveData() {
+
+  if (saveInProgress) {
+    return;
+  }
 
   if (
     !scanLocked
@@ -1115,88 +1142,242 @@ function saveData() {
 
   }
 
-  const saveBtn =
-    document.getElementById(
-      'saveBtn'
-    );
+  pendingRequestId =
+    createRequestId();
 
-  saveBtn.disabled =
+  saveAttempt =
+    0;
+
+  saveInProgress =
     true;
 
-  saveBtn.textContent =
-    '⏳ ĐANG LƯU...';
+  document
+    .getElementById(
+      'saveBtn'
+    )
+    .disabled =
+      true;
+
+  document
+    .getElementById(
+      'clearBtn'
+    )
+    .disabled =
+      true;
 
   updateStatus(
     'Đang gửi dữ liệu...',
     ''
   );
 
-  const requestId =
-    createRequestId();
+  sendSaveRequest({
+
+    token:
+      API_TOKEN,
+
+    action:
+      'save',
+
+    callback:
+      'handleSaveResponse',
+
+    mode:
+      currentMode,
+
+    source:
+      'QR',
+
+    requestId:
+      pendingRequestId,
+
+    khachHang,
+
+    donHang,
+
+    maLenh,
+
+    quyCach,
+
+    soLuongYeuCau,
+
+    soLuong,
+
+    viTri,
+
+    ghiChu
+
+  });
+
+}
+
+
+function sendSaveRequest(
+  data
+) {
+
+  saveAttempt++;
+
+  const saveBtn =
+    document
+      .getElementById(
+        'saveBtn'
+      );
+
+  saveBtn.textContent =
+    saveAttempt === 1
+      ? '⏳ ĐANG LƯU...'
+      : '⏳ ĐANG XÁC NHẬN...';
+
+  if (
+    saveAttempt > 1
+  ) {
+
+    updateStatus(
+      'Đang xác nhận dữ liệu... Lần ' +
+      saveAttempt +
+      '/' +
+      MAX_SAVE_ATTEMPTS +
+      '.',
+      ''
+    );
+
+  }
+
+  if (
+    saveTimeoutId
+  ) {
+
+    clearTimeout(
+      saveTimeoutId
+    );
+
+  }
 
   const params =
-    new URLSearchParams({
-
-      token:
-        API_TOKEN,
-
-      action:
-        'save',
-
-      callback:
-        'handleSaveResponse',
-
-      mode:
-        currentMode,
-
-      source:
-        'QR',
-
-      requestId,
-
-      khachHang,
-
-      donHang,
-
-      maLenh,
-
-      quyCach,
-
-      soLuongYeuCau,
-
-      soLuong,
-
-      viTri,
-
-      ghiChu
-
-    });
+    new URLSearchParams(
+      data
+    );
 
   const script =
-    document.createElement(
-      'script'
-    );
+    document
+      .createElement(
+        'script'
+      );
 
   script.src =
     API_URL +
     '?' +
     params.toString();
 
+  let finished =
+    false;
+
+  const finishAttempt =
+    function(
+      retry
+    ) {
+
+      if (
+        finished
+      ) {
+
+        return;
+
+      }
+
+      finished =
+        true;
+
+      script.remove();
+
+      if (
+        saveTimeoutId
+      ) {
+
+        clearTimeout(
+          saveTimeoutId
+        );
+
+        saveTimeoutId =
+          null;
+
+      }
+
+      if (
+        retry &&
+        saveAttempt <
+          MAX_SAVE_ATTEMPTS
+      ) {
+
+        setTimeout(
+          () => {
+
+            if (
+              saveInProgress &&
+              pendingRequestId ===
+                data.requestId
+            ) {
+
+              sendSaveRequest(
+                data
+              );
+
+            }
+
+          },
+          SAVE_RETRY_DELAY_MS
+        );
+
+        return;
+
+      }
+
+      if (
+        retry
+      ) {
+
+        saveInProgress =
+          false;
+
+        document
+          .getElementById(
+            'saveBtn'
+          )
+          .disabled =
+            false;
+
+        document
+          .getElementById(
+            'clearBtn'
+          )
+          .disabled =
+            false;
+
+        document
+          .getElementById(
+            'saveBtn'
+          )
+          .textContent =
+            '💾 LƯU DỮ LIỆU';
+
+        updateStatus(
+          'Chưa nhận được phản hồi từ hệ thống. Dữ liệu trên form vẫn được giữ nguyên. Vui lòng kiểm tra Google Sheet trước khi gửi lại.',
+          'error'
+        );
+
+        pendingRequestId =
+          '';
+
+      }
+
+    };
+
   script.onerror =
     function() {
 
-      saveBtn.disabled =
-        false;
-
-      saveBtn.textContent =
-        '💾 LƯU DỮ LIỆU';
-
-      updateStatus(
-        'Không thể kết nối với hệ thống.',
-        'error'
+      finishAttempt(
+        true
       );
-
-      script.remove();
 
     };
 
@@ -1206,6 +1387,18 @@ function saveData() {
       script
     );
 
+  saveTimeoutId =
+    setTimeout(
+      function() {
+
+        finishAttempt(
+          true
+        );
+
+      },
+      SAVE_TIMEOUT_MS
+    );
+
 }
 
 
@@ -1213,17 +1406,61 @@ function handleSaveResponse(
   result
 ) {
 
-  const saveBtn =
-    document
-      .getElementById(
-        'saveBtn'
-      );
+  if (
+    !saveInProgress
+  ) {
 
-  saveBtn.disabled =
+    return;
+
+  }
+
+  if (
+    result &&
+    result.requestId &&
+    result.requestId !==
+      pendingRequestId
+  ) {
+
+    return;
+
+  }
+
+  if (
+    saveTimeoutId
+  ) {
+
+    clearTimeout(
+      saveTimeoutId
+    );
+
+    saveTimeoutId =
+      null;
+
+  }
+
+  saveInProgress =
     false;
 
-  saveBtn.textContent =
-    '💾 LƯU DỮ LIỆU';
+  document
+    .getElementById(
+      'saveBtn'
+    )
+    .disabled =
+      false;
+
+  document
+    .getElementById(
+      'clearBtn'
+    )
+    .disabled =
+      false;
+
+  document
+    .getElementById(
+      'saveBtn'
+    )
+    .textContent =
+      '💾 LƯU DỮ LIỆU';
 
   if (
     !result ||
@@ -1237,6 +1474,9 @@ function handleSaveResponse(
         : 'Lưu dữ liệu thất bại.',
       'error'
     );
+
+    pendingRequestId =
+      '';
 
     return;
 
@@ -1312,6 +1552,9 @@ function handleSaveResponse(
     .add(
       'hidden'
     );
+
+  pendingRequestId =
+    '';
 
   setTimeout(
     () => {
