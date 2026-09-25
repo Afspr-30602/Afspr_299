@@ -89,7 +89,6 @@ input{
 
 input[readonly]{
   background:#f8fafc;
-  color:#374151;
 }
 
 #readerWrap{
@@ -246,20 +245,50 @@ onclick="toggleTorch()">
 Thông tin đơn hàng
 </div>
 
-<label>Mã Lệnh</label>
-<input id="maLenh" type="text" readonly>
+<label for="maLenh">
+Mã Lệnh
+</label>
 
-<label>Khách Hàng</label>
-<input id="khachHang" type="text" readonly>
+<input
+id="maLenh"
+type="text"
+readonly>
 
-<label>Đơn Hàng</label>
-<input id="donHang" type="text" readonly>
+<label for="khachHang">
+Khách Hàng
+</label>
 
-<label>Quy Cách Đơn Hàng</label>
-<input id="quyCach" type="text" readonly>
+<input
+id="khachHang"
+type="text"
+readonly>
 
-<label>Số Lượng Yêu Cầu</label>
-<input id="soLuongYeuCau" type="text" readonly>
+<label for="donHang">
+Đơn Hàng
+</label>
+
+<input
+id="donHang"
+type="text"
+readonly>
+
+<label for="quyCach">
+Quy Cách Đơn Hàng
+</label>
+
+<input
+id="quyCach"
+type="text"
+readonly>
+
+<label for="soLuongYeuCau">
+Số Lượng Yêu Cầu
+</label>
+
+<input
+id="soLuongYeuCau"
+type="text"
+readonly>
 
 </div>
 
@@ -269,7 +298,7 @@ Thông tin đơn hàng
 Thông tin kho
 </div>
 
-<label id="soLuongLabel">
+<label id="soLuongLabel" for="soLuong">
 Số Lượng Nhập
 </label>
 
@@ -279,7 +308,7 @@ type="text"
 inputmode="decimal"
 autocomplete="off">
 
-<label id="viTriLabel">
+<label id="viTriLabel" for="viTri">
 Vị Trí Nhập
 </label>
 
@@ -288,7 +317,7 @@ id="viTri"
 type="text"
 autocomplete="off">
 
-<label>
+<label for="ghiChu">
 Ghi Chú
 </label>
 
@@ -350,33 +379,29 @@ function setMode(mode){
 
   currentMode = mode;
 
-  document
-    .getElementById('nhapBtn')
+  document.getElementById('nhapBtn')
     .classList.toggle(
       'active',
       mode === 'NHAP'
     );
 
-  document
-    .getElementById('xuatBtn')
+  document.getElementById('xuatBtn')
     .classList.toggle(
       'active',
       mode === 'XUAT'
     );
 
-  document.getElementById(
-    'soLuongLabel'
-  ).textContent =
-    mode === 'NHAP'
-      ? 'Số Lượng Nhập'
-      : 'Số Lượng Xuất';
+  document.getElementById('soLuongLabel')
+    .textContent =
+      mode === 'NHAP'
+        ? 'Số Lượng Nhập'
+        : 'Số Lượng Xuất';
 
-  document.getElementById(
-    'viTriLabel'
-  ).textContent =
-    mode === 'NHAP'
-      ? 'Vị Trí Nhập'
-      : 'Vị Trí Xuất';
+  document.getElementById('viTriLabel')
+    .textContent =
+      mode === 'NHAP'
+        ? 'Vị Trí Nhập'
+        : 'Vị Trí Xuất';
 
   clearMessage();
 }
@@ -454,9 +479,8 @@ async function onScanSuccess(decodedText){
     fields.soLuongYeuCau.value =
       data.soLuongYeuCau;
 
-    document.getElementById(
-      'qrStatus'
-    ).textContent =
+    document.getElementById('qrStatus')
+      .textContent =
       '✓ Đã quét QR — nhập thông tin kho rồi ghi dữ liệu';
 
     showSuccess(
@@ -493,12 +517,15 @@ async function startScanner(){
 
   reader.innerHTML = '';
 
-  const torchBtn =
-    document.getElementById('torchBtn');
+  document.getElementById('torchBtn')
+    .classList.remove('on');
 
-  torchBtn.classList.remove('on');
-  torchBtn.textContent = '🔦 FLASH';
-  torchBtn.disabled = true;
+  document.getElementById('torchBtn')
+    .textContent =
+    '🔦 FLASH';
+
+  document.getElementById('torchBtn')
+    .disabled = true;
 
   html5QrCode =
     new Html5Qrcode(
@@ -514,75 +541,13 @@ async function startScanner(){
 
   try{
 
-    const cameras =
-      await Html5Qrcode.getCameras();
-
-    if(
-      !cameras ||
-      cameras.length === 0
-    ){
-
-      throw new Error(
-        'Không tìm thấy camera.'
-      );
-    }
-
-    let cameraId = null;
-
-    const backCamera =
-      cameras.find(camera => {
-
-        const label =
-          String(
-            camera.label || ''
-          ).toLowerCase();
-
-        return (
-          label.includes('back') ||
-          label.includes('rear') ||
-          label.includes('environment')
-        );
-
-      });
-
-    if(backCamera){
-
-      cameraId =
-        backCamera.id;
-
-    }else{
-
-      const nonFrontCamera =
-        cameras.find(camera => {
-
-          const label =
-            String(
-              camera.label || ''
-            ).toLowerCase();
-
-          return !(
-            label.includes('front') ||
-            label.includes('user')
-          );
-
-        });
-
-      if(nonFrontCamera){
-
-        cameraId =
-          nonFrontCamera.id;
-
-      }else{
-
-        throw new Error(
-          'Không xác định được camera sau.'
-        );
-      }
-    }
-
     await html5QrCode.start(
 
-      cameraId,
+      {
+        facingMode:{
+          exact:'environment'
+        }
+      },
 
       {
         fps:15,
@@ -592,7 +557,16 @@ async function startScanner(){
           viewfinderHeight
         ){
 
-          const size =
+          const width =
+            Math.floor(
+              Math.min(
+                viewfinderWidth * 0.68,
+                viewfinderHeight * 0.68,
+                330
+              )
+            );
+
+          const height =
             Math.floor(
               Math.min(
                 viewfinderWidth * 0.68,
@@ -602,8 +576,8 @@ async function startScanner(){
             );
 
           return {
-            width:size,
-            height:size
+            width,
+            height
           };
         },
 
@@ -621,23 +595,20 @@ async function startScanner(){
 
     updateTorchAvailability();
 
-    document.getElementById(
-      'qrStatus'
-    ).textContent =
+    document.getElementById('qrStatus')
+      .textContent =
       'Đưa mã QR vào khung để quét';
 
   }catch(error){
 
     scannerRunning = false;
 
-    document.getElementById(
-      'qrStatus'
-    ).textContent =
+    document.getElementById('qrStatus')
+      .textContent =
       'Không thể mở camera sau.';
 
     showError(
-      error.message ||
-      'Không thể mở camera sau.'
+      'Không thể mở camera sau. Hãy kiểm tra quyền camera của Safari.'
     );
   }
 }
@@ -678,10 +649,8 @@ async function stopScanner(){
     scannerRunning = false;
     torchOn = false;
 
-    document.getElementById(
-      'torchBtn'
-    ).disabled = true;
-
+    document.getElementById('torchBtn')
+      .disabled = true;
   }
 }
 
@@ -785,9 +754,7 @@ function parseNumber(value){
   const number =
     Number(text);
 
-  if(
-    !Number.isFinite(number)
-  ){
+  if(!Number.isFinite(number)){
     return null;
   }
 
@@ -838,9 +805,7 @@ function callAppsScript(params){
       );
 
       const script =
-        document.createElement(
-          'script'
-        );
+        document.createElement('script');
 
       let finished = false;
 
