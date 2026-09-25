@@ -258,7 +258,6 @@ button.action{
       Thông tin đơn hàng
     </div>
 
-
     <label for="maLenh">
       Mã Lệnh
     </label>
@@ -406,11 +405,11 @@ let html5QrCode = null;
 
 let scannerRunning = false;
 
+let scannerStarting = false;
+
 let scanLocked = false;
 
 let torchOn = false;
-
-let scannerStarting = false;
 
 
 const fields = {
@@ -453,6 +452,7 @@ function setMode(mode) {
       'active',
       mode === 'NHAP'
     );
+
 
   document
     .getElementById('xuatBtn')
@@ -548,7 +548,7 @@ function parseQrText(text) {
 }
 
 
-function onScanSuccess(decodedText) {
+async function onScanSuccess(decodedText) {
 
   if (scanLocked) {
     return;
@@ -580,273 +580,30 @@ function onScanSuccess(decodedText) {
       data.soLuongYeuCau;
 
 
-    fields.soLuong.focus();
-
-
     document
       .getElementById('qrStatus')
       .textContent =
-        '✓ Đã quét QR — nhập thông tin kho rồi ghi dữ liệu';
+        '✓ Đã quét QR — camera đã khóa';
 
 
     showSuccess(
       'Đã nhận dữ liệu từ QR.'
     );
 
+
+    await stopScanner();
+
+
+    fields.soLuong.focus();
+
+
   } catch (error) {
+
+    scanLocked = false;
 
     showError(
       error.message ||
       'QR không hợp lệ.'
-    );
-
-  }
-
-}
-
-
-async function startScanner() {
-
-  if (
-    scannerRunning ||
-    scannerStarting
-  ) {
-    return;
-  }
-
-
-  if (
-    typeof Html5Qrcode ===
-    'undefined'
-  ) {
-
-    showError(
-      'Đang tải bộ quét QR, vui lòng thử lại.'
-    );
-
-    return;
-  }
-
-
-  scannerStarting = true;
-
-  scanLocked = false;
-
-  torchOn = false;
-
-
-  const reader =
-    document.getElementById(
-      'reader'
-    );
-
-
-  reader.innerHTML = '';
-
-
-  const torchButton =
-    document.getElementById(
-      'torchBtn'
-    );
-
-
-  torchButton.classList.remove(
-    'on'
-  );
-
-  torchButton.textContent =
-    '🔦 FLASH';
-
-  torchButton.disabled = true;
-
-
-  html5QrCode =
-    new Html5Qrcode(
-      'reader',
-      {
-        formatsToSupport: [
-          Html5QrcodeSupportedFormats.QR_CODE
-        ],
-
-        useBarCodeDetectorIfSupported:
-          true,
-
-        verbose:
-          false
-      }
-    );
-
-
-  try {
-
-    const cameras =
-      await Html5Qrcode.getCameras();
-
-
-    if (
-      !cameras ||
-      cameras.length === 0
-    ) {
-
-      throw new Error(
-        'Không tìm thấy camera.'
-      );
-
-    }
-
-
-    let backCameraId = null;
-
-
-    for (
-      const camera of cameras
-    ) {
-
-      const label =
-        String(
-          camera.label || ''
-        ).toLowerCase();
-
-
-      if (
-        label.includes('back') ||
-        label.includes('rear') ||
-        label.includes('environment') ||
-        label.includes('world')
-      ) {
-
-        backCameraId =
-          camera.id;
-
-        break;
-
-      }
-
-    }
-
-
-    let started = false;
-
-
-    if (backCameraId) {
-
-      try {
-
-        await html5QrCode.start(
-
-          backCameraId,
-
-          scannerConfig(),
-
-          onScanSuccess,
-
-          function() {}
-
-        );
-
-        started = true;
-
-      } catch (error) {}
-
-    }
-
-
-    if (!started) {
-
-      try {
-
-        await html5QrCode.start(
-
-          {
-            facingMode: {
-              exact: 'environment'
-            }
-          },
-
-          scannerConfig(),
-
-          onScanSuccess,
-
-          function() {}
-
-        );
-
-        started = true;
-
-      } catch (error) {}
-
-    }
-
-
-    if (!started) {
-
-      try {
-
-        await html5QrCode.start(
-
-          {
-            facingMode:
-              'environment'
-          },
-
-          scannerConfig(),
-
-          onScanSuccess,
-
-          function() {}
-
-        );
-
-        started = true;
-
-      } catch (error) {}
-
-    }
-
-
-    if (!started) {
-
-      throw new Error(
-        'Không thể mở camera sau trên thiết bị này.'
-      );
-
-    }
-
-
-    scannerRunning =
-      true;
-
-    scannerStarting =
-      false;
-
-
-    document
-      .getElementById('qrStatus')
-      .textContent =
-        'Đưa mã QR vào khung để quét';
-
-
-    updateTorchAvailability();
-
-
-  } catch (error) {
-
-    scannerRunning =
-      false;
-
-    scannerStarting =
-      false;
-
-
-    document
-      .getElementById('qrStatus')
-      .textContent =
-        'Không thể mở camera.';
-
-
-    showError(
-      error.message ||
-      'Không thể mở camera.'
     );
 
   }
@@ -899,6 +656,272 @@ function scannerConfig() {
 }
 
 
+async function startScanner() {
+
+  if (
+    scannerRunning ||
+    scannerStarting
+  ) {
+    return;
+  }
+
+
+  if (
+    typeof Html5Qrcode ===
+    'undefined'
+  ) {
+
+    showError(
+      'Đang tải bộ quét QR, vui lòng thử lại.'
+    );
+
+    return;
+
+  }
+
+
+  scannerStarting =
+    true;
+
+
+  scanLocked =
+    false;
+
+
+  torchOn =
+    false;
+
+
+  const reader =
+    document.getElementById(
+      'reader'
+    );
+
+
+  reader.innerHTML =
+    '';
+
+
+  const torchButton =
+    document.getElementById(
+      'torchBtn'
+    );
+
+
+  torchButton.classList.remove(
+    'on'
+  );
+
+
+  torchButton.textContent =
+    '🔦 FLASH';
+
+
+  torchButton.disabled =
+    true;
+
+
+  html5QrCode =
+    new Html5Qrcode(
+      'reader',
+      {
+        formatsToSupport: [
+          Html5QrcodeSupportedFormats.QR_CODE
+        ],
+
+        useBarCodeDetectorIfSupported:
+          true,
+
+        verbose:
+          false
+      }
+    );
+
+
+  try {
+
+    const cameras =
+      await Html5Qrcode.getCameras();
+
+
+    if (
+      !cameras ||
+      cameras.length === 0
+    ) {
+
+      throw new Error(
+        'Không tìm thấy camera.'
+      );
+
+    }
+
+
+    let backCameraId =
+      null;
+
+
+    for (
+      const camera of cameras
+    ) {
+
+      const label =
+        String(
+          camera.label || ''
+        ).toLowerCase();
+
+
+      if (
+        label.includes('back') ||
+        label.includes('rear') ||
+        label.includes('environment') ||
+        label.includes('world')
+      ) {
+
+        backCameraId =
+          camera.id;
+
+        break;
+
+      }
+
+    }
+
+
+    let started =
+      false;
+
+
+    if (backCameraId) {
+
+      try {
+
+        await html5QrCode.start(
+
+          backCameraId,
+
+          scannerConfig(),
+
+          onScanSuccess,
+
+          function() {}
+
+        );
+
+        started =
+          true;
+
+      } catch (error) {}
+
+    }
+
+
+    if (!started) {
+
+      try {
+
+        await html5QrCode.start(
+
+          {
+            facingMode: {
+              exact: 'environment'
+            }
+          },
+
+          scannerConfig(),
+
+          onScanSuccess,
+
+          function() {}
+
+        );
+
+        started =
+          true;
+
+      } catch (error) {}
+
+    }
+
+
+    if (!started) {
+
+      try {
+
+        await html5QrCode.start(
+
+          {
+            facingMode:
+              'environment'
+          },
+
+          scannerConfig(),
+
+          onScanSuccess,
+
+          function() {}
+
+        );
+
+        started =
+          true;
+
+      } catch (error) {}
+
+    }
+
+
+    if (!started) {
+
+      throw new Error(
+        'Không thể mở camera sau trên thiết bị này.'
+      );
+
+    }
+
+
+    scannerRunning =
+      true;
+
+
+    scannerStarting =
+      false;
+
+
+    document
+      .getElementById('qrStatus')
+      .textContent =
+        'Đưa mã QR vào khung để quét';
+
+
+    updateTorchAvailability();
+
+
+  } catch (error) {
+
+    scannerRunning =
+      false;
+
+
+    scannerStarting =
+      false;
+
+
+    document
+      .getElementById('qrStatus')
+      .textContent =
+        'Không thể mở camera.';
+
+
+    showError(
+      error.message ||
+      'Không thể mở camera.'
+    );
+
+  }
+
+}
+
+
 async function stopScanner() {
 
   if (!html5QrCode) {
@@ -919,7 +942,8 @@ async function stopScanner() {
         .applyVideoConstraints({
           advanced: [
             {
-              torch: false
+              torch:
+                false
             }
           ]
         })
@@ -940,8 +964,28 @@ async function stopScanner() {
   scannerRunning =
     false;
 
+
   torchOn =
     false;
+
+
+  const torchButton =
+    document.getElementById(
+      'torchBtn'
+    );
+
+
+  torchButton.classList.remove(
+    'on'
+  );
+
+
+  torchButton.textContent =
+    '🔦 FLASH';
+
+
+  torchButton.disabled =
+    true;
 
 
   try {
@@ -949,6 +993,10 @@ async function stopScanner() {
     await html5QrCode.clear();
 
   } catch (e) {}
+
+
+  html5QrCode =
+    null;
 
 }
 
@@ -1199,7 +1247,8 @@ function callAppsScript(params) {
 
             window[
               callbackName
-            ] = undefined;
+            ] =
+              undefined;
 
           }
 
@@ -1411,6 +1460,7 @@ async function saveData() {
   saveButton.disabled =
     true;
 
+
   saveButton.textContent =
     'ĐANG GHI...';
 
@@ -1533,10 +1583,10 @@ async function saveData() {
       document
         .getElementById('qrStatus')
         .textContent =
-          'Đưa mã QR tiếp theo vào khung để quét';
+          'Đang mở camera để quét mã tiếp theo...';
 
 
-      fields.soLuong.focus();
+      await startScanner();
 
 
       return;
@@ -1564,6 +1614,7 @@ async function saveData() {
 
     saveButton.disabled =
       false;
+
 
     saveButton.textContent =
       '💾 GHI DỮ LIỆU';
@@ -1610,7 +1661,7 @@ async function clearForm() {
   document
     .getElementById('qrStatus')
     .textContent =
-      'Đưa mã QR vào khung để quét';
+      'Đang mở camera...';
 
 
   if (!scannerRunning) {
@@ -1633,6 +1684,7 @@ function showError(message) {
   el.className =
     'error';
 
+
   el.textContent =
     message;
 
@@ -1649,6 +1701,7 @@ function showSuccess(message) {
 
   el.className =
     'success';
+
 
   el.textContent =
     message;
