@@ -1,1140 +1,898 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
-  >
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#111827">
+<link rel="preconnect" href="https://script.google.com">
+<link rel="preconnect" href="https://unpkg.com">
+<title>NHẬP XUẤT KHO</title>
 
-  <title>KHO THÀNH PHẨM</title>
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 
-  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<style>
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
 
-  <style>
-    * {
-      box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent;
-    }
+body{
+  margin:0;
+  font-family:Arial,Helvetica,sans-serif;
+  background:#f3f4f6;
+  color:#111827;
+}
 
-    body {
-      margin: 0;
-      padding: 12px;
-      background: #f2f4f7;
-      font-family: Arial, Helvetica, sans-serif;
-      color: #1f2937;
-    }
+.container{
+  width:100%;
+  max-width:600px;
+  margin:0 auto;
+  padding:16px;
+}
 
-    .app {
-      width: 100%;
-      max-width: 520px;
-      margin: 0 auto;
-    }
+h1{
+  text-align:center;
+  margin:4px 0 18px;
+  font-size:25px;
+}
 
-    h1 {
-      margin: 4px 0 14px;
-      text-align: center;
-      font-size: 25px;
-      font-weight: 700;
-    }
+.mode-buttons{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-bottom:12px;
+}
 
-    .mode {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      margin-bottom: 10px;
-    }
+.mode-btn{
+  border:0;
+  border-radius:12px;
+  padding:14px;
+  font-size:17px;
+  font-weight:700;
+  background:#d1d5db;
+  color:#111827;
+}
 
-    button {
-      border: 0;
-      border-radius: 10px;
-      min-height: 46px;
-      font-size: 16px;
-      font-weight: 700;
-      cursor: pointer;
-    }
+.mode-btn.active{
+  background:#111827;
+  color:white;
+}
 
-    .mode button {
-      background: #d9dee5;
-      color: #374151;
-    }
+.card{
+  background:white;
+  border-radius:14px;
+  padding:16px;
+  margin-bottom:14px;
+  box-shadow:0 2px 8px rgba(0,0,0,.08);
+}
 
-    .mode button.active {
-      background: #2563eb;
-      color: white;
-    }
+.card-title{
+  font-size:18px;
+  font-weight:700;
+  margin-bottom:12px;
+}
 
-    .camera-box {
-      background: #111827;
-      border-radius: 14px;
-      overflow: hidden;
-      position: relative;
-    }
+label{
+  display:block;
+  font-weight:600;
+  margin:10px 0 6px;
+}
 
-    #reader {
-      width: 100%;
-      min-height: 280px;
-    }
+input{
+  width:100%;
+  padding:12px;
+  border:1px solid #cbd5e1;
+  border-radius:9px;
+  font-size:16px;
+  background:white;
+}
 
-    #reader video {
-      width: 100% !important;
-      height: auto !important;
-      object-fit: cover;
-    }
+input[readonly]{
+  background:#f8fafc;
+  color:#374151;
+}
 
-    .camera-actions {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      padding: 8px;
-      background: #111827;
-    }
+#readerWrap{
+  position:relative;
+  width:100%;
+  border-radius:14px;
+  overflow:hidden;
+  background:#000;
+}
 
-    .camera-actions button {
-      background: #374151;
-      color: white;
-    }
+#reader{
+  width:100%;
+  min-height:280px;
+}
 
-    .camera-actions button:disabled {
-      opacity: 0.45;
-    }
+#reader video{
+  width:100% !important;
+  height:auto !important;
+  object-fit:cover;
+}
 
-    .card {
-      margin-top: 10px;
-      padding: 12px;
-      background: white;
-      border-radius: 14px;
-      box-shadow: 0 2px 8px rgba(0,0,0,.06);
-    }
+#torchBtn{
+  position:absolute;
+  top:12px;
+  right:12px;
+  z-index:20;
+  border:0;
+  border-radius:12px;
+  padding:10px 14px;
+  background:rgba(17,24,39,.78);
+  color:white;
+  font-size:16px;
+  font-weight:700;
+  backdrop-filter:blur(4px);
+}
 
-    .field {
-      margin-bottom: 9px;
-    }
+#torchBtn.on{
+  background:#f59e0b;
+  color:#111827;
+}
 
-    .field:last-child {
-      margin-bottom: 0;
-    }
+#torchBtn:disabled{
+  opacity:.5;
+}
 
-    label {
-      display: block;
-      margin-bottom: 4px;
-      font-size: 13px;
-      font-weight: 700;
-      color: #4b5563;
-    }
+.qr-status{
+  text-align:center;
+  font-size:14px;
+  margin:10px 0 0;
+  color:#475569;
+}
 
-    input {
-      width: 100%;
-      height: 44px;
-      padding: 0 11px;
-      border: 1px solid #d1d5db;
-      border-radius: 9px;
-      background: #f9fafb;
-      font-size: 16px;
-      outline: none;
-    }
+.buttons{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
 
-    input:focus {
-      border-color: #2563eb;
-      background: white;
-    }
+button.action{
+  border:0;
+  border-radius:10px;
+  padding:14px;
+  font-size:17px;
+  font-weight:700;
+}
 
-    input[readonly] {
-      color: #374151;
-      background: #f3f4f6;
-    }
+.clear-btn{
+  background:#e5e7eb;
+  color:#111827;
+}
 
-    .required {
-      color: #dc2626;
-    }
+.save-btn{
+  background:#2563eb;
+  color:white;
+}
 
-    .bottom-actions {
-      display: grid;
-      grid-template-columns: 1fr 1.5fr;
-      gap: 8px;
-      margin-top: 10px;
-    }
+.save-btn:disabled{
+  opacity:.6;
+}
 
-    .delete-btn {
-      background: #e5e7eb;
-      color: #374151;
-    }
+.error{
+  color:#b91c1c;
+  background:#fee2e2;
+  border-radius:12px;
+  padding:14px;
+  text-align:center;
+  font-weight:700;
+  margin-top:14px;
+}
 
-    .save-btn {
-      background: #16a34a;
-      color: white;
-    }
-
-    .save-btn:disabled,
-    .delete-btn:disabled {
-      opacity: .5;
-    }
-
-    #status {
-      margin-top: 10px;
-      padding: 11px;
-      border-radius: 10px;
-      text-align: center;
-      font-size: 14px;
-      font-weight: 700;
-      background: #e5e7eb;
-      color: #374151;
-      display: none;
-    }
-
-    #status.success {
-      display: block;
-      background: #dcfce7;
-      color: #166534;
-    }
-
-    #status.error {
-      display: block;
-      background: #fee2e2;
-      color: #991b1b;
-    }
-
-    #status.info {
-      display: block;
-      background: #dbeafe;
-      color: #1e40af;
-    }
-
-    .scan-hint {
-      padding: 7px 10px;
-      text-align: center;
-      color: #d1d5db;
-      font-size: 13px;
-      background: #111827;
-    }
-
-    .loading {
-      opacity: .65;
-      pointer-events: none;
-    }
-  </style>
+.success{
+  color:#15803d;
+  background:#dcfce7;
+  border-radius:12px;
+  padding:14px;
+  text-align:center;
+  font-weight:700;
+  margin-top:14px;
+}
+</style>
 </head>
 
 <body>
 
-<div class="app">
+<div class="container">
 
-  <h1>KHO THÀNH PHẨM</h1>
+<h1>NHẬP XUẤT KHO</h1>
 
-  <div class="mode">
-    <button
-      id="btnNhap"
-      class="active"
-      type="button"
-      onclick="setMode('NHAP')"
-    >
-      NHẬP KHO
-    </button>
+<div class="mode-buttons">
 
-    <button
-      id="btnXuat"
-      type="button"
-      onclick="setMode('XUAT')"
-    >
-      XUẤT KHO
-    </button>
-  </div>
+<button
+id="nhapBtn"
+class="mode-btn active"
+onclick="setMode('NHAP')">
+NHẬP KHO
+</button>
 
-  <div class="camera-box">
+<button
+id="xuatBtn"
+class="mode-btn"
+onclick="setMode('XUAT')">
+XUẤT KHO
+</button>
 
-    <div id="reader"></div>
+</div>
 
-    <div class="scan-hint" id="scanHint">
-      Đưa mã QR vào khung để quét
-    </div>
+<div id="qrSection" class="card">
 
-    <div class="camera-actions">
+<div class="card-title">
+Quét mã QR
+</div>
 
-      <button
-        id="flashBtn"
-        type="button"
-        onclick="toggleFlash()"
-        disabled
-      >
-        FLASH
-      </button>
+<div id="readerWrap">
 
-      <button
-        type="button"
-        onclick="startScanner()"
-      >
-        QUÉT LẠI
-      </button>
+<div id="reader"></div>
 
-    </div>
+<button
+id="torchBtn"
+onclick="toggleTorch()">
+🔦 FLASH
+</button>
 
-  </div>
+</div>
 
-  <div class="card">
+<div id="qrStatus" class="qr-status">
+Đưa mã QR vào khung để quét
+</div>
 
-    <div class="field">
-      <label>Mã Lệnh <span class="required">*</span></label>
-      <input id="maLenh" type="text" readonly>
-    </div>
+</div>
 
-    <div class="field">
-      <label>Khách Hàng <span class="required">*</span></label>
-      <input id="khachHang" type="text" readonly>
-    </div>
+<div class="card">
 
-    <div class="field">
-      <label>Đơn Hàng <span class="required">*</span></label>
-      <input id="donHang" type="text" readonly>
-    </div>
+<div class="card-title">
+Thông tin đơn hàng
+</div>
 
-    <div class="field">
-      <label>Quy Cách Đơn Hàng <span class="required">*</span></label>
-      <input id="quyCach" type="text" readonly>
-    </div>
+<label>Mã Lệnh</label>
+<input id="maLenh" type="text" readonly>
 
-    <div class="field">
-      <label>Số Lượng Yêu Cầu <span class="required">*</span></label>
-      <input id="soLuongYeuCau" type="text" readonly>
-    </div>
+<label>Khách Hàng</label>
+<input id="khachHang" type="text" readonly>
 
-  </div>
+<label>Đơn Hàng</label>
+<input id="donHang" type="text" readonly>
 
-  <div class="card">
+<label>Quy Cách Đơn Hàng</label>
+<input id="quyCach" type="text" readonly>
 
-    <div class="field">
-      <label id="quantityLabel">
-        Số Lượng Nhập <span class="required">*</span>
-      </label>
+<label>Số Lượng Yêu Cầu</label>
+<input id="soLuongYeuCau" type="text" readonly>
 
-      <input
-        id="soLuong"
-        type="number"
-        inputmode="decimal"
-        min="0"
-        step="any"
-        autocomplete="off"
-        placeholder="Nhập số lượng"
-      >
-    </div>
+</div>
 
-    <div class="field">
-      <label id="locationLabel">
-        Vị Trí Nhập <span class="required">*</span>
-      </label>
+<div class="card">
 
-      <input
-        id="viTri"
-        type="text"
-        autocomplete="off"
-        placeholder="Nhập vị trí"
-      >
-    </div>
+<div class="card-title">
+Thông tin kho
+</div>
 
-    <div class="field">
-      <label>Ghi Chú</label>
+<label id="soLuongLabel">
+Số Lượng Nhập
+</label>
 
-      <input
-        id="ghiChu"
-        type="text"
-        autocomplete="off"
-        placeholder="Không bắt buộc"
-      >
-    </div>
+<input
+id="soLuong"
+type="text"
+inputmode="decimal"
+autocomplete="off">
 
-  </div>
+<label id="viTriLabel">
+Vị Trí Nhập
+</label>
 
-  <div class="bottom-actions">
+<input
+id="viTri"
+type="text"
+autocomplete="off">
 
-    <button
-      id="deleteBtn"
-      class="delete-btn"
-      type="button"
-      onclick="clearForm()"
-    >
-      XÓA
-    </button>
+<label>
+Ghi Chú
+</label>
 
-    <button
-      id="saveBtn"
-      class="save-btn"
-      type="button"
-      onclick="saveData()"
-    >
-      GHI DỮ LIỆU
-    </button>
+<input
+id="ghiChu"
+type="text"
+autocomplete="off">
 
-  </div>
+</div>
 
-  <div id="status"></div>
+<div class="buttons">
+
+<button
+class="action clear-btn"
+onclick="clearForm()">
+XÓA
+</button>
+
+<button
+id="saveBtn"
+class="action save-btn"
+onclick="saveData()">
+💾 GHI DỮ LIỆU
+</button>
+
+</div>
+
+<div id="message"></div>
 
 </div>
 
 <script>
 
 const API_URL =
-  'https://script.google.com/macros/s/AKfycbyPukcfexXRyCaYdOvTFlQGFjBG4bZgPinqz7VgSarjzEdQB3paApSYW4x9xzFFiMfv/exec';
+'https://script.google.com/macros/s/AKfycbyPukcfexXRyCaYdOvTFlQGFjBG4bZgPinqz7VgSarjzEdQB3paApSYW4x9xzFFiMfv/exec';
 
 const API_TOKEN =
-  'QR_KHO_2026';
+'QR_KHO_2026';
 
-let mode = 'NHAP';
+let currentMode = 'NHAP';
 
-let scanner = null;
+let html5QrCode = null;
 let scannerRunning = false;
 let scanLocked = false;
-let flashOn = false;
-let flashSupported = false;
+let torchOn = false;
 
-let lastQrText = '';
-let lastQrTime = 0;
+const fields = {
+  maLenh:document.getElementById('maLenh'),
+  khachHang:document.getElementById('khachHang'),
+  donHang:document.getElementById('donHang'),
+  quyCach:document.getElementById('quyCach'),
+  soLuongYeuCau:document.getElementById('soLuongYeuCau'),
+  soLuong:document.getElementById('soLuong'),
+  viTri:document.getElementById('viTri'),
+  ghiChu:document.getElementById('ghiChu')
+};
 
-const SCAN_COOLDOWN = 1200;
+function setMode(mode){
 
-
-function setMode(newMode) {
-
-  mode = newMode;
+  currentMode = mode;
 
   document
-    .getElementById('btnNhap')
+    .getElementById('nhapBtn')
     .classList.toggle(
       'active',
       mode === 'NHAP'
     );
 
   document
-    .getElementById('btnXuat')
+    .getElementById('xuatBtn')
     .classList.toggle(
       'active',
       mode === 'XUAT'
     );
 
-  document.getElementById('quantityLabel').innerHTML =
+  document.getElementById(
+    'soLuongLabel'
+  ).textContent =
     mode === 'NHAP'
-      ? 'Số Lượng Nhập <span class="required">*</span>'
-      : 'Số Lượng Xuất <span class="required">*</span>';
+      ? 'Số Lượng Nhập'
+      : 'Số Lượng Xuất';
 
-  document.getElementById('locationLabel').innerHTML =
+  document.getElementById(
+    'viTriLabel'
+  ).textContent =
     mode === 'NHAP'
-      ? 'Vị Trí Nhập <span class="required">*</span>'
-      : 'Vị Trí Xuất <span class="required">*</span>';
+      ? 'Vị Trí Nhập'
+      : 'Vị Trí Xuất';
 
-  showStatus(
-    mode === 'NHAP'
-      ? 'Đang ở chế độ NHẬP KHO'
-      : 'Đang ở chế độ XUẤT KHO',
-    'info'
-  );
+  clearMessage();
 }
 
+function parseQrText(text){
 
-function getReaderConfig() {
+  const parts =
+    String(text || '')
+      .split('|')
+      .map(v => v.trim());
+
+  if(parts.length !== 5){
+
+    throw new Error(
+      'Mã QR phải có đúng 5 trường.'
+    );
+  }
+
+  if(parts.some(v => !v)){
+
+    throw new Error(
+      'Mã QR đang thiếu thông tin.'
+    );
+  }
+
+  const quantity =
+    parseNumber(parts[4]);
+
+  if(
+    quantity === null ||
+    quantity <= 0
+  ){
+
+    throw new Error(
+      'Số Lượng Yêu Cầu trong QR không hợp lệ.'
+    );
+  }
 
   return {
-    fps: 12,
-
-    qrbox: function(viewfinderWidth, viewfinderHeight) {
-
-      const size =
-        Math.min(
-          viewfinderWidth,
-          viewfinderHeight
-        ) * 0.68;
-
-      return {
-        width: Math.floor(size),
-        height: Math.floor(size)
-      };
-    },
-
-    aspectRatio: 1,
-
-    formatsToSupport: [
-      Html5QrcodeSupportedFormats.QR_CODE
-    ],
-
-    rememberLastUsedCamera: true
+    maLenh:parts[0],
+    khachHang:parts[1],
+    donHang:parts[2],
+    quyCach:parts[3],
+    soLuongYeuCau:parts[4]
   };
 }
 
+async function onScanSuccess(decodedText){
 
-async function startScanner() {
-
-  if (scanLocked) {
+  if(scanLocked){
     return;
   }
 
-  if (!scanner) {
+  try{
 
-    scanner =
-      new Html5Qrcode('reader');
+    const data =
+      parseQrText(decodedText);
 
-  } else if (scannerRunning) {
+    scanLocked = true;
 
-    return;
+    await stopScanner();
 
-  }
+    fields.maLenh.value =
+      data.maLenh;
 
-  flashOn = false;
-  flashSupported = false;
+    fields.khachHang.value =
+      data.khachHang;
 
-  document
-    .getElementById('flashBtn')
-    .disabled = true;
+    fields.donHang.value =
+      data.donHang;
 
-  try {
+    fields.quyCach.value =
+      data.quyCach;
 
-    showStatus(
-      'Đang mở camera...',
-      'info'
+    fields.soLuongYeuCau.value =
+      data.soLuongYeuCau;
+
+    document.getElementById(
+      'qrStatus'
+    ).textContent =
+      '✓ Đã quét QR — nhập thông tin kho rồi ghi dữ liệu';
+
+    showSuccess(
+      'Đã nhận dữ liệu từ QR.'
     );
 
-    await scanner.start(
-      {
-        facingMode: {
-          ideal: 'environment'
-        }
-      },
+    setTimeout(function(){
 
-      getReaderConfig(),
+      fields.soLuong.focus();
+
+    },100);
+
+  }catch(error){
+
+    showError(
+      error.message
+    );
+
+    scanLocked = false;
+  }
+}
+
+async function startScanner(){
+
+  if(scannerRunning){
+    return;
+  }
+
+  scanLocked = false;
+  torchOn = false;
+
+  const reader =
+    document.getElementById('reader');
+
+  reader.innerHTML = '';
+
+  const torchBtn =
+    document.getElementById('torchBtn');
+
+  torchBtn.classList.remove('on');
+  torchBtn.textContent = '🔦 FLASH';
+  torchBtn.disabled = true;
+
+  html5QrCode =
+    new Html5Qrcode(
+      'reader',
+      {
+        formatsToSupport:[
+          Html5QrcodeSupportedFormats.QR_CODE
+        ],
+        useBarCodeDetectorIfSupported:true,
+        verbose:false
+      }
+    );
+
+  try{
+
+    const cameras =
+      await Html5Qrcode.getCameras();
+
+    if(
+      !cameras ||
+      cameras.length === 0
+    ){
+
+      throw new Error(
+        'Không tìm thấy camera.'
+      );
+    }
+
+    let cameraId = null;
+
+    const backCamera =
+      cameras.find(camera => {
+
+        const label =
+          String(
+            camera.label || ''
+          ).toLowerCase();
+
+        return (
+          label.includes('back') ||
+          label.includes('rear') ||
+          label.includes('environment')
+        );
+
+      });
+
+    if(backCamera){
+
+      cameraId =
+        backCamera.id;
+
+    }else{
+
+      const nonFrontCamera =
+        cameras.find(camera => {
+
+          const label =
+            String(
+              camera.label || ''
+            ).toLowerCase();
+
+          return !(
+            label.includes('front') ||
+            label.includes('user')
+          );
+
+        });
+
+      if(nonFrontCamera){
+
+        cameraId =
+          nonFrontCamera.id;
+
+      }else{
+
+        throw new Error(
+          'Không xác định được camera sau.'
+        );
+      }
+    }
+
+    await html5QrCode.start(
+
+      cameraId,
+
+      {
+        fps:15,
+
+        qrbox:function(
+          viewfinderWidth,
+          viewfinderHeight
+        ){
+
+          const size =
+            Math.floor(
+              Math.min(
+                viewfinderWidth * 0.68,
+                viewfinderHeight * 0.68,
+                330
+              )
+            );
+
+          return {
+            width:size,
+            height:size
+          };
+        },
+
+        aspectRatio:1.333333,
+
+        disableFlip:true
+      },
 
       onScanSuccess,
 
-      onScanFailure
-
+      function(){}
     );
 
     scannerRunning = true;
 
-    checkFlashSupport();
+    updateTorchAvailability();
 
-    showStatus(
-      'Sẵn sàng quét QR',
-      'info'
-    );
+    document.getElementById(
+      'qrStatus'
+    ).textContent =
+      'Đưa mã QR vào khung để quét';
 
-  } catch (error) {
+  }catch(error){
 
     scannerRunning = false;
 
-    try {
+    document.getElementById(
+      'qrStatus'
+    ).textContent =
+      'Không thể mở camera sau.';
 
-      const cameras =
-        await Html5Qrcode.getCameras();
+    showError(
+      error.message ||
+      'Không thể mở camera sau.'
+    );
+  }
+}
 
-      if (
-        cameras &&
-        cameras.length > 0
-      ) {
+async function stopScanner(){
 
-        const backCamera =
-          cameras.find(camera =>
-            /back|rear|environment/i.test(
-              camera.label || ''
-            )
-          ) || cameras[cameras.length - 1];
+  if(
+    !html5QrCode ||
+    !scannerRunning
+  ){
+    return;
+  }
 
-        await scanner.start(
-          backCamera.id,
-          getReaderConfig(),
-          onScanSuccess,
-          onScanFailure
-        );
+  try{
 
-        scannerRunning = true;
+    if(torchOn){
 
-        checkFlashSupport();
+      try{
 
-        showStatus(
-          'Sẵn sàng quét QR',
-          'info'
-        );
+        await html5QrCode
+          .applyVideoConstraints({
+            advanced:[
+              {
+                torch:false
+              }
+            ]
+          });
 
-        return;
-      }
-
-    } catch (secondError) {
+      }catch(e){}
     }
 
-    showStatus(
-      'Không thể mở camera. Hãy cấp quyền camera cho trình duyệt.',
-      'error'
-    );
+    await html5QrCode.stop();
+
+  }catch(e){
+
+  }finally{
+
+    scannerRunning = false;
+    torchOn = false;
+
+    document.getElementById(
+      'torchBtn'
+    ).disabled = true;
+
   }
 }
 
+function updateTorchAvailability(){
 
-function onScanFailure() {
-}
-
-
-async function onScanSuccess(decodedText) {
-
-  if (scanLocked) {
-    return;
-  }
-
-  const now = Date.now();
-
-  if (
-    decodedText === lastQrText &&
-    now - lastQrTime < SCAN_COOLDOWN
-  ) {
-    return;
-  }
-
-  lastQrText = decodedText;
-  lastQrTime = now;
-
-  scanLocked = true;
-
-  await stopScanner();
-
-  const success =
-    parseQr(decodedText);
-
-  if (!success) {
-
-    scanLocked = false;
-
-    setTimeout(
-      startScanner,
-      300
-    );
-  }
-}
-
-
-function parseQr(text) {
-
-  const parts =
-    String(text)
-      .split('|')
-      .map(value => value.trim());
-
-  if (parts.length !== 5) {
-
-    showStatus(
-      'QR không đúng định dạng. QR phải có 5 trường.',
-      'error'
+  const button =
+    document.getElementById(
+      'torchBtn'
     );
 
-    return false;
-  }
+  button.disabled = true;
 
-  const [
-    maLenh,
-    khachHang,
-    donHang,
-    quyCach,
-    soLuongYeuCau
-  ] = parts;
-
-  if (!maLenh) {
-
-    showStatus(
-      'QR thiếu Mã Lệnh.',
-      'error'
-    );
-
-    return false;
-  }
-
-  if (!khachHang) {
-
-    showStatus(
-      'QR thiếu Khách Hàng.',
-      'error'
-    );
-
-    return false;
-  }
-
-  if (!donHang) {
-
-    showStatus(
-      'QR thiếu Đơn Hàng.',
-      'error'
-    );
-
-    return false;
-  }
-
-  if (!quyCach) {
-
-    showStatus(
-      'QR thiếu Quy Cách Đơn Hàng.',
-      'error'
-    );
-
-    return false;
-  }
-
-  if (!soLuongYeuCau) {
-
-    showStatus(
-      'QR thiếu Số Lượng Yêu Cầu.',
-      'error'
-    );
-
-    return false;
-  }
-
-  document.getElementById('maLenh').value =
-    maLenh;
-
-  document.getElementById('khachHang').value =
-    khachHang;
-
-  document.getElementById('donHang').value =
-    donHang;
-
-  document.getElementById('quyCach').value =
-    quyCach;
-
-  document.getElementById('soLuongYeuCau').value =
-    soLuongYeuCau;
-
-  document.getElementById('soLuong').value =
-    '';
-
-  document.getElementById('viTri').value =
-    '';
-
-  document.getElementById('ghiChu').value =
-    '';
-
-  document.getElementById('soLuong').focus();
-
-  showStatus(
-    'Đã quét QR. Nhập số lượng và vị trí.',
-    'success'
-  );
-
-  return true;
-}
-
-
-async function stopScanner() {
-
-  if (
-    !scanner ||
-    !scannerRunning
-  ) {
-    return;
-  }
-
-  try {
-
-    await scanner.stop();
-
-  } catch (error) {
-  }
-
-  scannerRunning = false;
-
-  flashOn = false;
-  flashSupported = false;
-
-  document
-    .getElementById('flashBtn')
-    .disabled = true;
-}
-
-
-async function checkFlashSupport() {
-
-  if (
-    !scanner ||
-    !scannerRunning
-  ) {
-    return;
-  }
-
-  try {
+  try{
 
     const capabilities =
-      scanner.getRunningTrackCapabilities();
+      html5QrCode
+        .getRunningTrackCapabilities();
 
-    if (
+    if(
       capabilities &&
       capabilities.torch
-    ) {
+    ){
 
-      flashSupported = true;
+      button.disabled = false;
 
-      document
-        .getElementById('flashBtn')
-        .disabled = false;
-
-    } else {
-
-      flashSupported = false;
-
-      document
-        .getElementById('flashBtn')
-        .disabled = true;
     }
 
-  } catch (error) {
+  }catch(error){
 
-    flashSupported = false;
+    button.disabled = true;
 
-    document
-      .getElementById('flashBtn')
-      .disabled = true;
   }
 }
 
+async function toggleTorch(){
 
-async function toggleFlash() {
-
-  if (
-    !scanner ||
-    !scannerRunning ||
-    !flashSupported
-  ) {
+  if(
+    !html5QrCode ||
+    !scannerRunning
+  ){
     return;
   }
 
-  try {
+  const button =
+    document.getElementById(
+      'torchBtn'
+    );
 
-    flashOn = !flashOn;
+  if(button.disabled){
 
-    await scanner.applyVideoConstraints({
-      advanced: [
-        {
-          torch: flashOn
-        }
-      ]
-    });
+    showError(
+      'Thiết bị hoặc trình duyệt không hỗ trợ đèn flash.'
+    );
 
-    document.getElementById('flashBtn').textContent =
-      flashOn
-        ? 'TẮT FLASH'
-        : 'FLASH';
+    return;
+  }
 
-  } catch (error) {
+  try{
 
-    flashOn = false;
+    await html5QrCode
+      .applyVideoConstraints({
+        advanced:[
+          {
+            torch:!torchOn
+          }
+        ]
+      });
 
-    document.getElementById('flashBtn').textContent =
-      'FLASH';
+    torchOn =
+      !torchOn;
 
-    showStatus(
-      'Thiết bị không hỗ trợ Flash camera.',
-      'error'
+    button.classList.toggle(
+      'on',
+      torchOn
+    );
+
+    button.textContent =
+      torchOn
+        ? '🔆 TẮT FLASH'
+        : '🔦 FLASH';
+
+  }catch(error){
+
+    showError(
+      'Không thể bật/tắt đèn flash trên thiết bị này.'
     );
   }
 }
 
+function parseNumber(value){
 
-function getValue(id) {
+  const text =
+    String(value || '')
+      .trim()
+      .replace(/,/g,'.');
 
-  return String(
-    document.getElementById(id).value || ''
-  ).trim();
+  if(!text){
+    return null;
+  }
+
+  const number =
+    Number(text);
+
+  if(
+    !Number.isFinite(number)
+  ){
+    return null;
+  }
+
+  return number;
 }
 
+function createRequestId(){
 
-function generateRequestId() {
+  if(
+    window.crypto &&
+    typeof window.crypto.randomUUID ===
+      'function'
+  ){
+
+    return window.crypto.randomUUID();
+
+  }
 
   return (
-    Date.now().toString(36) +
+    Date.now() +
     '_' +
     Math.random()
       .toString(36)
-      .slice(2, 12)
+      .substring(2) +
+    '_' +
+    Math.random()
+      .toString(36)
+      .substring(2)
   );
 }
 
-
-function buildParams(requestId) {
-
-  return {
-    token: API_TOKEN,
-    action: 'save',
-    mode: mode,
-    source: 'QR',
-    requestId: requestId,
-
-    maLenh:
-      getValue('maLenh'),
-
-    khachHang:
-      getValue('khachHang'),
-
-    donHang:
-      getValue('donHang'),
-
-    quyCach:
-      getValue('quyCach'),
-
-    soLuongYeuCau:
-      getValue('soLuongYeuCau'),
-
-    soLuong:
-      getValue('soLuong'),
-
-    viTri:
-      getValue('viTri'),
-
-    ghiChu:
-      getValue('ghiChu')
-  };
-}
-
-
-function validateForm() {
-
-  if (!getValue('maLenh')) {
-
-    showStatus(
-      'Chưa có Mã Lệnh. Hãy quét QR.',
-      'error'
-    );
-
-    return false;
-  }
-
-  if (!getValue('khachHang')) {
-
-    showStatus(
-      'Chưa có Khách Hàng. Hãy quét QR.',
-      'error'
-    );
-
-    return false;
-  }
-
-  if (!getValue('donHang')) {
-
-    showStatus(
-      'Chưa có Đơn Hàng. Hãy quét QR.',
-      'error'
-    );
-
-    return false;
-  }
-
-  if (!getValue('quyCach')) {
-
-    showStatus(
-      'Chưa có Quy Cách Đơn Hàng. Hãy quét QR.',
-      'error'
-    );
-
-    return false;
-  }
-
-  if (!getValue('soLuongYeuCau')) {
-
-    showStatus(
-      'Chưa có Số Lượng Yêu Cầu. Hãy quét QR.',
-      'error'
-    );
-
-    return false;
-  }
-
-  const quantity =
-    Number(
-      getValue('soLuong')
-        .replace(',', '.')
-    );
-
-  if (
-    !Number.isFinite(quantity) ||
-    quantity <= 0
-  ) {
-
-    showStatus(
-      mode === 'NHAP'
-        ? 'Số Lượng Nhập phải lớn hơn 0.'
-        : 'Số Lượng Xuất phải lớn hơn 0.',
-      'error'
-    );
-
-    return false;
-  }
-
-  if (!getValue('viTri')) {
-
-    showStatus(
-      mode === 'NHAP'
-        ? 'Vui lòng nhập Vị Trí Nhập.'
-        : 'Vui lòng nhập Vị Trí Xuất.',
-      'error'
-    );
-
-    return false;
-  }
-
-  return true;
-}
-
-
-function saveData() {
-
-  if (!validateForm()) {
-    return;
-  }
-
-  const saveButton =
-    document.getElementById('saveBtn');
-
-  const deleteButton =
-    document.getElementById('deleteBtn');
-
-  saveButton.disabled = true;
-  deleteButton.disabled = true;
-
-  saveButton.textContent =
-    'ĐANG GHI...';
-
-  showStatus(
-    'Đang gửi dữ liệu...',
-    'info'
-  );
-
-  const requestId =
-    generateRequestId();
-
-  const params =
-    buildParams(requestId);
-
-  sendWithRetry(
-    params,
-    2
-  )
-    .then(result => {
-
-      if (
-        result &&
-        result.success
-      ) {
-
-        showStatus(
-          result.message ||
-          'Đã ghi dữ liệu thành công.',
-          'success'
-        );
-
-        clearTransactionFields();
-
-        setTimeout(() => {
-
-          scanLocked = false;
-
-          startScanner();
-
-        }, 500);
-
-      } else {
-
-        throw new Error(
-          result &&
-          result.message
-            ? result.message
-            : 'Không thể ghi dữ liệu.'
-        );
-      }
-
-    })
-    .catch(error => {
-
-      showStatus(
-        error.message ||
-        'Không thể kết nối với hệ thống.',
-        'error'
-      );
-
-      scanLocked = false;
-
-    })
-    .finally(() => {
-
-      saveButton.disabled = false;
-      deleteButton.disabled = false;
-
-      saveButton.textContent =
-        'GHI DỮ LIỆU';
-    });
-}
-
-
-function sendWithRetry(
-  params,
-  attempts
-) {
-
-  return sendJsonp(params)
-    .catch(error => {
-
-      if (attempts <= 1) {
-        throw error;
-      }
-
-      return new Promise(resolve =>
-        setTimeout(
-          resolve,
-          300
-        )
-      )
-        .then(() =>
-          sendJsonp(params)
-        );
-    });
-}
-
-
-function sendJsonp(params) {
+function callAppsScript(params){
 
   return new Promise(
-    (resolve, reject) => {
+    function(resolve,reject){
 
       const callbackName =
-        'qrCallback_' +
+        'qrKhoCallback_' +
         Date.now() +
         '_' +
-        Math.random()
-          .toString(36)
-          .slice(2, 8);
+        Math.floor(
+          Math.random() * 1000000
+        );
+
+      params.set(
+        'callback',
+        callbackName
+      );
+
+      const script =
+        document.createElement(
+          'script'
+        );
 
       let finished = false;
 
-      const script =
-        document.createElement('script');
+      const cleanup =
+        function(){
 
-      const query =
-        new URLSearchParams({
-          ...params,
-          callback: callbackName
-        });
+          if(script.parentNode){
 
-      const timer =
-        setTimeout(() => {
-
-          if (finished) {
-            return;
+            script.parentNode
+              .removeChild(script);
           }
 
-          finished = true;
+          try{
 
-          cleanup();
+            delete window[
+              callbackName
+            ];
 
-          reject(
-            new Error(
-              'Hệ thống phản hồi quá thời gian.'
-            )
-          );
+          }catch(e){
 
-        }, 12000);
+            window[
+              callbackName
+            ] = undefined;
+          }
+        };
+
+      const timer =
+        setTimeout(
+          function(){
+
+            if(finished){
+              return;
+            }
+
+            finished = true;
+
+            cleanup();
+
+            reject(
+              new Error(
+                'Hết thời gian chờ hệ thống.'
+              )
+            );
+
+          },
+          12000
+        );
 
       window[callbackName] =
-        function(result) {
+        function(result){
 
-          if (finished) {
+          if(finished){
             return;
           }
 
@@ -1147,17 +905,10 @@ function sendJsonp(params) {
           resolve(result);
         };
 
-      script.src =
-        API_URL +
-        '?' +
-        query.toString();
-
-      script.async = true;
-
       script.onerror =
-        function() {
+        function(){
 
-          if (finished) {
+          if(finished){
             return;
           }
 
@@ -1174,105 +925,299 @@ function sendJsonp(params) {
           );
         };
 
-      document
-        .head
-        .appendChild(script);
+      script.async = true;
 
+      script.src =
+        API_URL +
+        '?' +
+        params.toString();
 
-      function cleanup() {
-
-        try {
-          script.remove();
-        } catch (error) {
-        }
-
-        try {
-          delete window[callbackName];
-        } catch (error) {
-          window[callbackName] =
-            undefined;
-        }
-      }
-
+      document.body.appendChild(
+        script
+      );
     }
   );
 }
 
+async function saveData(){
 
-function clearTransactionFields() {
+  clearMessage();
 
-  document.getElementById('soLuong').value =
-    '';
+  const soLuong =
+    fields.soLuong.value.trim();
 
-  document.getElementById('viTri').value =
-    '';
+  const viTri =
+    fields.viTri.value.trim();
 
-  document.getElementById('ghiChu').value =
-    '';
-}
+  if(!soLuong){
 
+    showError(
+      currentMode === 'NHAP'
+        ? 'Vui lòng nhập Số Lượng Nhập.'
+        : 'Vui lòng nhập Số Lượng Xuất.'
+    );
 
-function clearForm() {
+    return;
+  }
 
-  document.getElementById('maLenh').value =
-    '';
+  const quantity =
+    parseNumber(soLuong);
 
-  document.getElementById('khachHang').value =
-    '';
+  if(
+    quantity === null ||
+    quantity <= 0
+  ){
 
-  document.getElementById('donHang').value =
-    '';
+    showError(
+      currentMode === 'NHAP'
+        ? 'Số Lượng Nhập không hợp lệ.'
+        : 'Số Lượng Xuất không hợp lệ.'
+    );
 
-  document.getElementById('quyCach').value =
-    '';
+    return;
+  }
 
-  document.getElementById('soLuongYeuCau').value =
-    '';
+  if(!viTri){
 
-  document.getElementById('soLuong').value =
-    '';
+    showError(
+      currentMode === 'NHAP'
+        ? 'Vui lòng nhập Vị Trí Nhập.'
+        : 'Vui lòng nhập Vị Trí Xuất.'
+    );
 
-  document.getElementById('viTri').value =
-    '';
+    return;
+  }
 
-  document.getElementById('ghiChu').value =
-    '';
+  if(
+    !fields.maLenh.value.trim() ||
+    !fields.khachHang.value.trim() ||
+    !fields.donHang.value.trim() ||
+    !fields.quyCach.value.trim() ||
+    !fields.soLuongYeuCau.value.trim()
+  ){
 
-  lastQrText = '';
-  lastQrTime = 0;
+    showError(
+      'Vui lòng quét QR đầy đủ thông tin.'
+    );
 
-  scanLocked = false;
+    return;
+  }
 
-  showStatus(
-    'Đã xóa dữ liệu.',
-    'info'
+  const params =
+    new URLSearchParams();
+
+  params.set(
+    'token',
+    API_TOKEN
   );
 
-  if (!scannerRunning) {
-    startScanner();
+  params.set(
+    'action',
+    'save'
+  );
+
+  params.set(
+    'mode',
+    currentMode
+  );
+
+  params.set(
+    'source',
+    'QR'
+  );
+
+  params.set(
+    'requestId',
+    createRequestId()
+  );
+
+  params.set(
+    'maLenh',
+    fields.maLenh.value.trim()
+  );
+
+  params.set(
+    'khachHang',
+    fields.khachHang.value.trim()
+  );
+
+  params.set(
+    'donHang',
+    fields.donHang.value.trim()
+  );
+
+  params.set(
+    'quyCach',
+    fields.quyCach.value.trim()
+  );
+
+  params.set(
+    'soLuongYeuCau',
+    fields.soLuongYeuCau.value.trim()
+  );
+
+  params.set(
+    'soLuong',
+    fields.soLuong.value.trim()
+  );
+
+  params.set(
+    'viTri',
+    fields.viTri.value.trim()
+  );
+
+  params.set(
+    'ghiChu',
+    fields.ghiChu.value.trim()
+  );
+
+  const saveButton =
+    document.getElementById(
+      'saveBtn'
+    );
+
+  saveButton.disabled = true;
+
+  saveButton.textContent =
+    'ĐANG GHI...';
+
+  try{
+
+    const result =
+      await callAppsScript(
+        params
+      );
+
+    if(
+      result &&
+      result.success
+    ){
+
+      showSuccess(
+        result.message ||
+        'Đã ghi dữ liệu thành công.'
+      );
+
+      fields.soLuong.value = '';
+      fields.viTri.value = '';
+      fields.ghiChu.value = '';
+
+      fields.maLenh.value = '';
+      fields.khachHang.value = '';
+      fields.donHang.value = '';
+      fields.quyCach.value = '';
+      fields.soLuongYeuCau.value = '';
+
+      document.getElementById(
+        'qrStatus'
+      ).textContent =
+        'Đang mở camera sau để quét mã tiếp theo...';
+
+      scanLocked = false;
+
+      setTimeout(
+        function(){
+
+          startScanner();
+
+        },
+        400
+      );
+
+      return;
+    }
+
+    showError(
+      result &&
+      result.message
+        ? result.message
+        : 'Không thể ghi dữ liệu.'
+    );
+
+  }catch(error){
+
+    showError(
+      error.message ||
+      'Không thể kết nối với hệ thống.'
+    );
+
+  }finally{
+
+    saveButton.disabled = false;
+
+    saveButton.textContent =
+      '💾 GHI DỮ LIỆU';
   }
 }
 
+function clearForm(){
 
-function showStatus(
-  message,
-  type
-) {
+  fields.maLenh.value = '';
+  fields.khachHang.value = '';
+  fields.donHang.value = '';
+  fields.quyCach.value = '';
+  fields.soLuongYeuCau.value = '';
+  fields.soLuong.value = '';
+  fields.viTri.value = '';
+  fields.ghiChu.value = '';
 
-  const status =
-    document.getElementById('status');
+  clearMessage();
 
-  status.textContent =
-    message;
+  scanLocked = false;
 
-  status.className =
-    type || 'info';
+  document.getElementById(
+    'qrStatus'
+  ).textContent =
+    'Đưa mã QR vào khung để quét';
+
+  if(!scannerRunning){
+
+    startScanner();
+
+  }
 }
 
+function showError(message){
+
+  const el =
+    document.getElementById(
+      'message'
+    );
+
+  el.className = 'error';
+
+  el.textContent =
+    message;
+}
+
+function showSuccess(message){
+
+  const el =
+    document.getElementById(
+      'message'
+    );
+
+  el.className = 'success';
+
+  el.textContent =
+    message;
+}
+
+function clearMessage(){
+
+  const el =
+    document.getElementById(
+      'message'
+    );
+
+  el.className = '';
+
+  el.textContent = '';
+}
 
 window.addEventListener(
   'load',
-  function() {
+  function(){
 
     setMode('NHAP');
 
@@ -1281,17 +1226,17 @@ window.addEventListener(
   }
 );
 
-
 document.addEventListener(
   'visibilitychange',
-  function() {
+  function(){
 
-    if (
+    if(
       document.hidden &&
       scannerRunning
-    ) {
+    ){
 
       stopScanner();
+
     }
 
   }
