@@ -2,14 +2,26 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
+
 <meta
   name="viewport"
   content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
 >
-<meta name="theme-color" content="#111827">
 
-<link rel="preconnect" href="https://script.google.com">
-<link rel="preconnect" href="https://unpkg.com">
+<meta
+  name="theme-color"
+  content="#111827"
+>
+
+<link
+  rel="preconnect"
+  href="https://script.google.com"
+>
+
+<link
+  rel="preconnect"
+  href="https://unpkg.com"
+>
 
 <title>NHẬP XUẤT KHO</title>
 
@@ -191,6 +203,7 @@ button.action{
   margin-top:14px;
 }
 </style>
+
 </head>
 
 <body>
@@ -198,6 +211,7 @@ button.action{
 <div class="container">
 
   <h1>NHẬP XUẤT KHO</h1>
+
 
   <div class="mode-buttons">
 
@@ -228,6 +242,7 @@ button.action{
       Quét mã QR
     </div>
 
+
     <div id="readerWrap">
 
       <div id="reader"></div>
@@ -242,6 +257,7 @@ button.action{
 
     </div>
 
+
     <div
       id="qrStatus"
       class="qr-status"
@@ -252,11 +268,15 @@ button.action{
   </div>
 
 
-  <div class="card">
+  <div
+    class="card"
+    id="orderInfoCard"
+  >
 
     <div class="card-title">
       Thông tin đơn hàng
     </div>
+
 
     <label for="maLenh">
       Mã Lệnh
@@ -443,7 +463,9 @@ const fields = {
 
 function setMode(mode) {
 
-  currentMode = mode;
+  currentMode =
+    mode;
+
 
   document
     .getElementById('nhapBtn')
@@ -489,10 +511,14 @@ function parseQrText(text) {
   const parts =
     String(text || '')
       .split('|')
-      .map(v => v.trim());
+      .map(
+        v => v.trim()
+      );
 
 
-  if (parts.length !== 5) {
+  if (
+    parts.length !== 5
+  ) {
 
     throw new Error(
       'Mã QR phải có đúng 5 trường.'
@@ -501,7 +527,11 @@ function parseQrText(text) {
   }
 
 
-  if (parts.some(v => !v)) {
+  if (
+    parts.some(
+      v => !v
+    )
+  ) {
 
     throw new Error(
       'Mã QR đang thiếu thông tin.'
@@ -511,7 +541,9 @@ function parseQrText(text) {
 
 
   const quantity =
-    parseNumber(parts[4]);
+    parseNumber(
+      parts[4]
+    );
 
 
   if (
@@ -548,20 +580,29 @@ function parseQrText(text) {
 }
 
 
-async function onScanSuccess(decodedText) {
+async function onScanSuccess(
+  decodedText
+) {
 
-  if (scanLocked) {
+  if (
+    scanLocked
+  ) {
+
     return;
+
   }
 
 
   try {
 
     const data =
-      parseQrText(decodedText);
+      parseQrText(
+        decodedText
+      );
 
 
-    scanLocked = true;
+    scanLocked =
+      true;
 
 
     fields.maLenh.value =
@@ -594,12 +635,44 @@ async function onScanSuccess(decodedText) {
     await stopScanner();
 
 
-    fields.soLuong.focus();
+    const orderCard =
+      document.getElementById(
+        'orderInfoCard'
+      );
+
+
+    if (
+      orderCard
+    ) {
+
+      orderCard.scrollIntoView({
+
+        behavior:
+          'smooth',
+
+        block:
+          'start'
+
+      });
+
+    }
+
+
+    setTimeout(
+      () => {
+
+        fields.soLuong.focus();
+
+      },
+      500
+    );
 
 
   } catch (error) {
 
-    scanLocked = false;
+    scanLocked =
+      false;
+
 
     showError(
       error.message ||
@@ -615,7 +688,8 @@ function scannerConfig() {
 
   return {
 
-    fps: 15,
+    fps:
+      15,
 
     qrbox:
       function(
@@ -662,7 +736,9 @@ async function startScanner() {
     scannerRunning ||
     scannerStarting
   ) {
+
     return;
+
   }
 
 
@@ -708,9 +784,11 @@ async function startScanner() {
     );
 
 
-  torchButton.classList.remove(
-    'on'
-  );
+  torchButton
+    .classList
+    .remove(
+      'on'
+    );
 
 
   torchButton.textContent =
@@ -725,8 +803,12 @@ async function startScanner() {
     new Html5Qrcode(
       'reader',
       {
+
         formatsToSupport: [
-          Html5QrcodeSupportedFormats.QR_CODE
+
+          Html5QrcodeSupportedFormats
+            .QR_CODE
+
         ],
 
         useBarCodeDetectorIfSupported:
@@ -734,6 +816,7 @@ async function startScanner() {
 
         verbose:
           false
+
       }
     );
 
@@ -741,7 +824,8 @@ async function startScanner() {
   try {
 
     const cameras =
-      await Html5Qrcode.getCameras();
+      await Html5Qrcode
+        .getCameras();
 
 
     if (
@@ -767,14 +851,20 @@ async function startScanner() {
       const label =
         String(
           camera.label || ''
-        ).toLowerCase();
+        )
+        .toLowerCase();
 
 
       if (
+
         label.includes('back') ||
+
         label.includes('rear') ||
+
         label.includes('environment') ||
+
         label.includes('world')
+
       ) {
 
         backCameraId =
@@ -791,7 +881,9 @@ async function startScanner() {
       false;
 
 
-    if (backCameraId) {
+    if (
+      backCameraId
+    ) {
 
       try {
 
@@ -807,15 +899,21 @@ async function startScanner() {
 
         );
 
+
         started =
           true;
 
-      } catch (error) {}
+
+      } catch (
+        error
+      ) {}
 
     }
 
 
-    if (!started) {
+    if (
+      !started
+    ) {
 
       try {
 
@@ -823,7 +921,8 @@ async function startScanner() {
 
           {
             facingMode: {
-              exact: 'environment'
+              exact:
+                'environment'
             }
           },
 
@@ -835,15 +934,21 @@ async function startScanner() {
 
         );
 
+
         started =
           true;
 
-      } catch (error) {}
+
+      } catch (
+        error
+      ) {}
 
     }
 
 
-    if (!started) {
+    if (
+      !started
+    ) {
 
       try {
 
@@ -862,15 +967,21 @@ async function startScanner() {
 
         );
 
+
         started =
           true;
 
-      } catch (error) {}
+
+      } catch (
+        error
+      ) {}
 
     }
 
 
-    if (!started) {
+    if (
+      !started
+    ) {
 
       throw new Error(
         'Không thể mở camera sau trên thiết bị này.'
@@ -896,7 +1007,9 @@ async function startScanner() {
     updateTorchAvailability();
 
 
-  } catch (error) {
+  } catch (
+    error
+  ) {
 
     scannerRunning =
       false;
@@ -924,41 +1037,63 @@ async function startScanner() {
 
 async function stopScanner() {
 
-  if (!html5QrCode) {
+  if (
+    !html5QrCode
+  ) {
+
     return;
+
   }
 
 
-  if (!scannerRunning) {
+  if (
+    !scannerRunning
+  ) {
+
     return;
+
   }
 
 
   try {
 
-    if (torchOn) {
+    if (
+      torchOn
+    ) {
 
       await html5QrCode
+
         .applyVideoConstraints({
+
           advanced: [
+
             {
               torch:
                 false
             }
+
           ]
+
         })
-        .catch(() => {});
+
+        .catch(
+          () => {}
+        );
 
     }
 
-  } catch (e) {}
+  } catch (
+    e
+  ) {}
 
 
   try {
 
     await html5QrCode.stop();
 
-  } catch (e) {}
+  } catch (
+    e
+  ) {}
 
 
   scannerRunning =
@@ -975,9 +1110,11 @@ async function stopScanner() {
     );
 
 
-  torchButton.classList.remove(
-    'on'
-  );
+  torchButton
+    .classList
+    .remove(
+      'on'
+    );
 
 
   torchButton.textContent =
@@ -992,7 +1129,9 @@ async function stopScanner() {
 
     await html5QrCode.clear();
 
-  } catch (e) {}
+  } catch (
+    e
+  ) {}
 
 
   html5QrCode =
@@ -1040,7 +1179,9 @@ function updateTorchAvailability() {
 
     }
 
-  } catch (error) {
+  } catch (
+    error
+  ) {
 
     button.disabled =
       true;
@@ -1068,7 +1209,9 @@ async function toggleTorch() {
     );
 
 
-  if (button.disabled) {
+  if (
+    button.disabled
+  ) {
 
     showError(
       'Thiết bị hoặc trình duyệt không hỗ trợ đèn flash.'
@@ -1087,12 +1230,16 @@ async function toggleTorch() {
 
     await html5QrCode
       .applyVideoConstraints({
+
         advanced: [
+
           {
             torch:
               newState
           }
+
         ]
+
       });
 
 
@@ -1100,10 +1247,12 @@ async function toggleTorch() {
       newState;
 
 
-    button.classList.toggle(
-      'on',
-      torchOn
-    );
+    button
+      .classList
+      .toggle(
+        'on',
+        torchOn
+      );
 
 
     button.textContent =
@@ -1112,7 +1261,9 @@ async function toggleTorch() {
         : '🔦 FLASH';
 
 
-  } catch (error) {
+  } catch (
+    error
+  ) {
 
     showError(
       'Không thể bật/tắt đèn flash trên thiết bị này.'
@@ -1126,20 +1277,28 @@ async function toggleTorch() {
 function parseNumber(value) {
 
   const text =
-    String(value || '')
-      .trim()
-      .replace(/,/g, '.');
+    String(
+      value || ''
+    )
+    .trim()
+    .replace(
+      /,/g,
+      '.'
+    );
 
 
-  if (!text) {
+  if (
+    !text
+  ) {
+
     return null;
+
   }
 
 
   if (
-    !/^\d+(?:\.\d+)?$/.test(
-      text
-    )
+    !/^\d+(?:\.\d+)?$/
+      .test(text)
   ) {
 
     return null;
@@ -1148,11 +1307,15 @@ function parseNumber(value) {
 
 
   const number =
-    Number(text);
+    Number(
+      text
+    );
 
 
   if (
-    !Number.isFinite(number)
+    !Number.isFinite(
+      number
+    )
   ) {
 
     return null;
@@ -1168,42 +1331,59 @@ function parseNumber(value) {
 function createRequestId() {
 
   if (
+
     window.crypto &&
-    typeof window.crypto.randomUUID ===
+
+    typeof window.crypto
+      .randomUUID ===
       'function'
+
   ) {
 
-    return window.crypto.randomUUID();
+    return window.crypto
+      .randomUUID();
 
   }
 
 
   return (
+
     Date.now() +
+
     '_' +
+
     Math.random()
       .toString(36)
       .substring(2) +
+
     '_' +
+
     Math.random()
       .toString(36)
       .substring(2)
+
   );
 
 }
 
 
-function callAppsScript(params) {
+function callAppsScript(
+  params
+) {
 
   return new Promise(
-    (resolve, reject) => {
+    (
+      resolve,
+      reject
+    ) => {
 
       const callbackName =
         'qrKhoCallback_' +
         Date.now() +
         '_' +
         Math.floor(
-          Math.random() * 1000000
+          Math.random() *
+          1000000
         );
 
 
@@ -1230,9 +1410,10 @@ function callAppsScript(params) {
             script.parentNode
           ) {
 
-            script.parentNode.removeChild(
-              script
-            );
+            script.parentNode
+              .removeChild(
+                script
+              );
 
           }
 
@@ -1243,7 +1424,9 @@ function callAppsScript(params) {
               callbackName
             ];
 
-          } catch (e) {
+          } catch (
+            e
+          ) {
 
             window[
               callbackName
@@ -1259,8 +1442,12 @@ function callAppsScript(params) {
         setTimeout(
           () => {
 
-            if (finished) {
+            if (
+              finished
+            ) {
+
               return;
+
             }
 
 
@@ -1272,9 +1459,11 @@ function callAppsScript(params) {
 
 
             reject(
+
               new Error(
                 'Hết thời gian chờ hệ thống.'
               )
+
             );
 
           },
@@ -1282,11 +1471,19 @@ function callAppsScript(params) {
         );
 
 
-      window[callbackName] =
-        function(result) {
+      window[
+        callbackName
+      ] =
+        function(
+          result
+        ) {
 
-          if (finished) {
+          if (
+            finished
+          ) {
+
             return;
+
           }
 
 
@@ -1302,7 +1499,9 @@ function callAppsScript(params) {
           cleanup();
 
 
-          resolve(result);
+          resolve(
+            result
+          );
 
         };
 
@@ -1310,8 +1509,12 @@ function callAppsScript(params) {
       script.onerror =
         function() {
 
-          if (finished) {
+          if (
+            finished
+          ) {
+
             return;
+
           }
 
 
@@ -1328,9 +1531,11 @@ function callAppsScript(params) {
 
 
           reject(
+
             new Error(
               'Không thể kết nối với hệ thống.'
             )
+
           );
 
         };
@@ -1346,9 +1551,10 @@ function callAppsScript(params) {
         params.toString();
 
 
-      document.body.appendChild(
-        script
-      );
+      document.body
+        .appendChild(
+          script
+        );
 
     }
   );
@@ -1374,7 +1580,9 @@ async function saveData() {
     fields.quyCach.value.trim();
 
   const soLuongYeuCau =
-    fields.soLuongYeuCau.value.trim();
+    fields.soLuongYeuCau
+      .value
+      .trim();
 
   const soLuong =
     fields.soLuong.value.trim();
@@ -1387,11 +1595,17 @@ async function saveData() {
 
 
   if (
+
     !maLenh ||
+
     !khachHang ||
+
     !donHang ||
+
     !quyCach ||
+
     !soLuongYeuCau
+
   ) {
 
     showError(
@@ -1403,12 +1617,18 @@ async function saveData() {
   }
 
 
-  if (!soLuong) {
+  if (
+    !soLuong
+  ) {
 
     showError(
+
       currentMode === 'NHAP'
+
         ? 'Vui lòng nhập Số Lượng Nhập.'
+
         : 'Vui lòng nhập Số Lượng Xuất.'
+
     );
 
     return;
@@ -1428,9 +1648,13 @@ async function saveData() {
   ) {
 
     showError(
+
       currentMode === 'NHAP'
+
         ? 'Số Lượng Nhập không hợp lệ.'
+
         : 'Số Lượng Xuất không hợp lệ.'
+
     );
 
     return;
@@ -1438,12 +1662,18 @@ async function saveData() {
   }
 
 
-  if (!viTri) {
+  if (
+    !viTri
+  ) {
 
     showError(
+
       currentMode === 'NHAP'
+
         ? 'Vui lòng nhập Vị Trí Nhập.'
+
         : 'Vui lòng nhập Vị Trí Xuất.'
+
     );
 
     return;
@@ -1561,8 +1791,11 @@ async function saveData() {
     ) {
 
       showSuccess(
+
         result.message ||
+
         'Đã ghi dữ liệu thành công.'
+
       );
 
 
@@ -1581,7 +1814,9 @@ async function saveData() {
 
 
       document
-        .getElementById('qrStatus')
+        .getElementById(
+          'qrStatus'
+        )
         .textContent =
           'Đang mở camera để quét mã tiếp theo...';
 
@@ -1595,18 +1830,27 @@ async function saveData() {
 
 
     showError(
+
       result &&
       result.message
+
         ? result.message
+
         : 'Không thể ghi dữ liệu.'
+
     );
 
 
-  } catch (error) {
+  } catch (
+    error
+  ) {
 
     showError(
+
       error.message ||
+
       'Không thể kết nối với hệ thống.'
+
     );
 
 
@@ -1659,12 +1903,16 @@ async function clearForm() {
 
 
   document
-    .getElementById('qrStatus')
+    .getElementById(
+      'qrStatus'
+    )
     .textContent =
       'Đang mở camera...';
 
 
-  if (!scannerRunning) {
+  if (
+    !scannerRunning
+  ) {
 
     await startScanner();
 
@@ -1673,7 +1921,9 @@ async function clearForm() {
 }
 
 
-function showError(message) {
+function showError(
+  message
+) {
 
   const el =
     document.getElementById(
@@ -1691,7 +1941,9 @@ function showError(message) {
 }
 
 
-function showSuccess(message) {
+function showSuccess(
+  message
+) {
 
   const el =
     document.getElementById(
@@ -1720,6 +1972,7 @@ function clearMessage() {
   el.className =
     '';
 
+
   el.textContent =
     '';
 
@@ -1730,7 +1983,9 @@ window.addEventListener(
   'load',
   () => {
 
-    setMode('NHAP');
+    setMode(
+      'NHAP'
+    );
 
     startScanner();
 
