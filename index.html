@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#111827">
+<meta name="apple-mobile-web-app-capable" content="yes">
+
 <title>Xuất Nhập Tồn Kho Thành Phẩm</title>
 
 <script src="https://unpkg.com/html5-qrcode"></script>
@@ -24,37 +26,50 @@ body {
   width: 100%;
   max-width: 620px;
   margin: 0 auto;
-  padding: 18px;
+  padding: 16px;
 }
 
 .header {
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 18px;
 }
 
 .header h1 {
   margin: 0;
-  font-size: 24px;
+  font-size: 23px;
   line-height: 1.3;
 }
 
 .header p {
-  margin: 7px 0 0;
+  margin: 6px 0 0;
   color: #6b7280;
   font-size: 14px;
+}
+
+.card {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 17px;
+  margin-bottom: 15px;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+}
+
+.card-title {
+  margin: 0 0 13px;
+  font-size: 17px;
 }
 
 .mode-buttons {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin-bottom: 16px;
+  gap: 10px;
+  margin-bottom: 15px;
 }
 
 .mode-button {
   border: 0;
-  border-radius: 12px;
-  padding: 17px 10px;
+  border-radius: 11px;
+  padding: 16px 10px;
   font-size: 17px;
   font-weight: 700;
   cursor: pointer;
@@ -74,18 +89,80 @@ body {
   box-shadow: 0 0 0 3px #111827;
 }
 
-.card {
-  background: #ffffff;
-  border-radius: 14px;
-  padding: 18px;
-  margin-bottom: 16px;
-  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+.source-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 12px;
 }
 
-.card-title {
-  margin: 0 0 14px;
+.source-button {
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+  color: #374151;
+  border-radius: 9px;
+  padding: 11px 8px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.source-button.active {
+  background: #111827;
+  color: #ffffff;
+  border-color: #111827;
+}
+
+.action-button {
+  width: 100%;
+  border: 0;
+  border-radius: 10px;
+  padding: 14px;
   font-size: 17px;
   font-weight: 700;
+  cursor: pointer;
+}
+
+.scan-button {
+  background: #111827;
+  color: #ffffff;
+}
+
+.stop-button {
+  margin-top: 10px;
+  background: #6b7280;
+  color: #ffffff;
+}
+
+.secondary-button {
+  background: #e5e7eb;
+  color: #111827;
+}
+
+.submit-button {
+  background: #2563eb;
+  color: #ffffff;
+}
+
+.submit-button:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+}
+
+#reader {
+  width: 100%;
+  margin-top: 13px;
+}
+
+.hidden {
+  display: none;
+}
+
+.manual-note {
+  margin: 0 0 10px;
+  color: #6b7280;
+  font-size: 13px;
+  line-height: 1.5;
 }
 
 label {
@@ -93,10 +170,6 @@ label {
   margin: 12px 0 6px;
   font-size: 15px;
   font-weight: 700;
-}
-
-.required {
-  color: #dc2626;
 }
 
 input,
@@ -121,58 +194,38 @@ input[readonly] {
 }
 
 textarea {
-  min-height: 85px;
+  min-height: 82px;
   resize: vertical;
 }
 
-.action-button {
-  width: 100%;
-  border: 0;
-  border-radius: 10px;
-  padding: 14px;
-  font-size: 17px;
-  font-weight: 700;
-  cursor: pointer;
+.required {
+  color: #dc2626;
 }
 
-.scan-button {
-  background: #111827;
-  color: #ffffff;
+.field-help {
+  display: block;
+  margin-top: 4px;
+  color: #6b7280;
+  font-size: 12px;
+  font-weight: 400;
 }
 
-.stop-button {
-  margin-top: 10px;
-  background: #6b7280;
-  color: #ffffff;
-}
-
-.submit-button {
-  background: #2563eb;
-  color: #ffffff;
-}
-
-.submit-button:disabled {
-  background: #9ca3af;
-  cursor: not-allowed;
-}
-
-#reader {
-  width: 100%;
-  margin-top: 14px;
-}
-
-.hidden {
-  display: none;
+.bottom-actions {
+  display: grid;
+  grid-template-columns: 1fr 1.6fr;
+  gap: 10px;
+  margin-top: 12px;
 }
 
 .status {
-  margin-top: 15px;
+  display: none;
+  margin-top: 14px;
   padding: 12px;
   border-radius: 9px;
   text-align: center;
-  font-size: 15px;
+  font-size: 14px;
+  line-height: 1.4;
   font-weight: 700;
-  display: none;
 }
 
 .status.success {
@@ -193,9 +246,20 @@ textarea {
   color: #1d4ed8;
 }
 
+.mode-label {
+  text-align: center;
+  margin-bottom: 12px;
+  padding: 9px;
+  border-radius: 8px;
+  background: #f3f4f6;
+  color: #374151;
+  font-size: 14px;
+  font-weight: 700;
+}
+
 @media (max-width: 480px) {
   .container {
-    padding: 12px;
+    padding: 11px;
   }
 
   .header h1 {
@@ -203,7 +267,7 @@ textarea {
   }
 
   .card {
-    padding: 15px;
+    padding: 14px;
   }
 }
 </style>
@@ -238,80 +302,121 @@ textarea {
     </button>
   </div>
 
-  <div class="card">
-    <h2 class="card-title">Quét mã QR</h2>
-
-    <button
-      id="scanButton"
-      class="action-button scan-button"
-      type="button"
-      onclick="startScanner()"
-    >
-      📷 QUÉT QR
-    </button>
-
-    <div id="reader"></div>
-
-    <button
-      id="stopButton"
-      class="action-button stop-button hidden"
-      type="button"
-      onclick="stopScanner()"
-    >
-      DỪNG QUÉT
-    </button>
+  <div id="modeLabel" class="mode-label">
+    Vui lòng chọn loại giao dịch
   </div>
 
   <div class="card">
-    <h2 class="card-title">Thông tin đơn hàng</h2>
 
-    <label for="maLenh">
+    <h2 class="card-title">Phương thức nhập dữ liệu</h2>
+
+    <div class="source-buttons">
+      <button
+        id="btnQR"
+        class="source-button active"
+        type="button"
+        onclick="setSource('QR')"
+      >
+        📷 Quét QR
+      </button>
+
+      <button
+        id="btnManual"
+        class="source-button"
+        type="button"
+        onclick="setSource('MANUAL')"
+      >
+        ⌨️ Nhập tay
+      </button>
+    </div>
+
+    <div id="qrSection">
+
+      <button
+        id="scanButton"
+        class="action-button scan-button"
+        type="button"
+        onclick="startScanner()"
+      >
+        📷 QUÉT QR
+      </button>
+
+      <div id="reader"></div>
+
+      <button
+        id="stopButton"
+        class="action-button stop-button hidden"
+        type="button"
+        onclick="stopScanner()"
+      >
+        DỪNG QUÉT
+      </button>
+
+    </div>
+
+    <div id="manualSection" class="hidden">
+
+      <p class="manual-note">
+        Các thông tin dưới đây không bắt buộc. Có thể nhập toàn bộ, nhập một phần hoặc để trống.
+      </p>
+
+      <label for="maLenh">Mã Lệnh</label>
+      <input id="maLenh" type="text" autocomplete="off">
+
+      <label for="khachHang">Khách Hàng</label>
+      <input id="khachHang" type="text" autocomplete="off">
+
+      <label for="donHang">Đơn Hàng</label>
+      <input id="donHang" type="text" autocomplete="off">
+
+      <label for="quyCach">Quy Cách Đơn Hàng</label>
+      <input id="quyCach" type="text" autocomplete="off">
+
+      <label for="soLuongYeuCau">Số Lượng Yêu Cầu</label>
+      <input
+        id="soLuongYeuCau"
+        type="text"
+        inputmode="decimal"
+        autocomplete="off"
+      >
+
+    </div>
+
+  </div>
+
+  <div id="qrDataSection" class="card">
+
+    <h2 class="card-title">Thông tin từ QR</h2>
+
+    <label for="qrMaLenh">
       Mã Lệnh <span class="required">*</span>
     </label>
-    <input
-      id="maLenh"
-      type="text"
-      readonly
-    >
+    <input id="qrMaLenh" type="text" readonly>
 
-    <label for="khachHang">
+    <label for="qrKhachHang">
       Khách Hàng <span class="required">*</span>
     </label>
-    <input
-      id="khachHang"
-      type="text"
-      readonly
-    >
+    <input id="qrKhachHang" type="text" readonly>
 
-    <label for="donHang">
+    <label for="qrDonHang">
       Đơn Hàng <span class="required">*</span>
     </label>
-    <input
-      id="donHang"
-      type="text"
-      readonly
-    >
+    <input id="qrDonHang" type="text" readonly>
 
-    <label for="quyCach">
+    <label for="qrQuyCach">
       Quy Cách Đơn Hàng <span class="required">*</span>
     </label>
-    <input
-      id="quyCach"
-      type="text"
-      readonly
-    >
+    <input id="qrQuyCach" type="text" readonly>
 
-    <label for="soLuongYeuCau">
+    <label for="qrSoLuongYeuCau">
       Số Lượng Yêu Cầu <span class="required">*</span>
     </label>
-    <input
-      id="soLuongYeuCau"
-      type="text"
-      readonly
-    >
+    <input id="qrSoLuongYeuCau" type="text" readonly>
+
   </div>
 
   <div class="card">
+
     <h2 class="card-title">Thông tin kho</h2>
 
     <label id="labelSoLuong" for="soLuong">
@@ -320,11 +425,14 @@ textarea {
 
     <input
       id="soLuong"
-      type="number"
-      min="0"
-      step="any"
+      type="text"
       inputmode="decimal"
+      autocomplete="off"
     >
+
+    <span class="field-help">
+      Có thể nhập số nguyên hoặc số thập phân.
+    </span>
 
     <label id="labelViTri" for="viTri">
       Vị Trí Nhập <span class="required">*</span>
@@ -333,6 +441,7 @@ textarea {
     <input
       id="viTri"
       type="text"
+      autocomplete="off"
     >
 
     <label for="ghiChu">
@@ -343,31 +452,48 @@ textarea {
       id="ghiChu"
       placeholder="Nhập ghi chú nếu cần"
     ></textarea>
+
   </div>
 
-  <button
-    id="submitButton"
-    class="action-button submit-button"
-    type="button"
-    onclick="submitData()"
-  >
-    💾 GHI DỮ LIỆU
-  </button>
+  <div class="bottom-actions">
+
+    <button
+      class="action-button secondary-button"
+      type="button"
+      onclick="clearForm()"
+    >
+      XÓA
+    </button>
+
+    <button
+      id="submitButton"
+      class="action-button submit-button"
+      type="button"
+      onclick="submitData()"
+    >
+      💾 GHI DỮ LIỆU
+    </button>
+
+  </div>
 
   <div id="status" class="status"></div>
 
 </div>
 
 <script>
-const API_URL = 'https://docs.google.com/spreadsheets/d/1es6ENSZiWLETLmut8sid1sRFihuzCnCIiBMJEwJhAJY/edit?gid=1267220691#gid=1267220691';
+const API_URL = 'DÁN_URL_WEB_APP_APPS_SCRIPT_VÀO_ĐÂY';
 
 const API_TOKEN = 'QR_KHO_2026';
 
 let currentMode = '';
 
+let currentSource = 'QR';
+
 let scanner = null;
 
 let scannerRunning = false;
+
+let scanLocked = false;
 
 function setMode(mode) {
   currentMode = mode;
@@ -377,6 +503,9 @@ function setMode(mode) {
 
   if (mode === 'NHAP') {
     document.getElementById('btnNhap').classList.add('active');
+
+    document.getElementById('modeLabel').textContent =
+      'Đang thực hiện: NHẬP KHO';
 
     document.getElementById('labelSoLuong').innerHTML =
       'Số Lượng Nhập <span class="required">*</span>';
@@ -388,6 +517,9 @@ function setMode(mode) {
   if (mode === 'XUAT') {
     document.getElementById('btnXuat').classList.add('active');
 
+    document.getElementById('modeLabel').textContent =
+      'Đang thực hiện: XUẤT KHO';
+
     document.getElementById('labelSoLuong').innerHTML =
       'Số Lượng Xuất <span class="required">*</span>';
 
@@ -398,16 +530,44 @@ function setMode(mode) {
   clearStatus();
 }
 
+function setSource(source) {
+  if (source === 'MANUAL' && scannerRunning) {
+    stopScanner();
+  }
+
+  currentSource = source;
+
+  document.getElementById('btnQR').classList.remove('active');
+  document.getElementById('btnManual').classList.remove('active');
+
+  document.getElementById('qrSection').classList.add('hidden');
+  document.getElementById('manualSection').classList.add('hidden');
+  document.getElementById('qrDataSection').classList.add('hidden');
+
+  if (source === 'QR') {
+    document.getElementById('btnQR').classList.add('active');
+    document.getElementById('qrSection').classList.remove('hidden');
+    document.getElementById('qrDataSection').classList.remove('hidden');
+  }
+
+  if (source === 'MANUAL') {
+    document.getElementById('btnManual').classList.add('active');
+    document.getElementById('manualSection').classList.remove('hidden');
+  }
+
+  clearStatus();
+}
+
 function startScanner() {
   if (!currentMode) {
     showStatus(
-      'Vui lòng chọn NHẬP KHO hoặc XUẤT KHO.',
+      'Vui lòng chọn NHẬP KHO hoặc XUẤT KHO trước.',
       'error'
     );
     return;
   }
 
-  if (scannerRunning) {
+  if (scannerRunning || scanLocked) {
     return;
   }
 
@@ -415,19 +575,21 @@ function startScanner() {
 
   scanner.start(
     {
-      facingMode: {
-        exact: 'environment'
-      }
+      facingMode: 'environment'
     },
     {
       fps: 10,
       qrbox: {
         width: 280,
         height: 180
-      },
-      aspectRatio: 1.777778
+      }
     },
     function(decodedText) {
+      if (scanLocked) {
+        return;
+      }
+
+      scanLocked = true;
       processQR(decodedText);
     },
     function() {}
@@ -440,20 +602,34 @@ function startScanner() {
   }).catch(function() {
     scanner = null;
     scannerRunning = false;
+    scanLocked = false;
 
     document
       .getElementById('stopButton')
       .classList.add('hidden');
 
     showStatus(
-      'Không thể mở camera. Hãy kiểm tra quyền sử dụng camera của trình duyệt.',
+      'Không thể mở camera. Hãy kiểm tra quyền sử dụng camera.',
       'error'
     );
   });
 }
 
 function stopScanner() {
-  if (!scanner || !scannerRunning) {
+  if (!scanner) {
+    scannerRunning = false;
+    scanLocked = false;
+
+    document
+      .getElementById('stopButton')
+      .classList.add('hidden');
+
+    return;
+  }
+
+  if (!scannerRunning) {
+    scanner = null;
+    scanLocked = false;
     return;
   }
 
@@ -461,6 +637,7 @@ function stopScanner() {
     scanner.clear();
     scanner = null;
     scannerRunning = false;
+    scanLocked = false;
 
     document
       .getElementById('stopButton')
@@ -468,6 +645,7 @@ function stopScanner() {
   }).catch(function() {
     scanner = null;
     scannerRunning = false;
+    scanLocked = false;
 
     document
       .getElementById('stopButton')
@@ -483,75 +661,58 @@ function processQR(text) {
     });
 
   if (data.length !== 5) {
+    scanLocked = false;
+
     showStatus(
-      'QR không đúng định dạng.',
+      'QR phải có đúng 5 dữ liệu.',
       'error'
     );
+
     return;
   }
 
   if (!data[0]) {
-    showStatus(
-      'QR thiếu Mã Lệnh.',
-      'error'
-    );
+    scanLocked = false;
+    showStatus('QR thiếu Mã Lệnh.', 'error');
     return;
   }
 
   if (!data[1]) {
-    showStatus(
-      'QR thiếu Khách Hàng.',
-      'error'
-    );
+    scanLocked = false;
+    showStatus('QR thiếu Khách Hàng.', 'error');
     return;
   }
 
   if (!data[2]) {
-    showStatus(
-      'QR thiếu Đơn Hàng.',
-      'error'
-    );
+    scanLocked = false;
+    showStatus('QR thiếu Đơn Hàng.', 'error');
     return;
   }
 
   if (!data[3]) {
-    showStatus(
-      'QR thiếu Quy Cách Đơn Hàng.',
-      'error'
-    );
+    scanLocked = false;
+    showStatus('QR thiếu Quy Cách Đơn Hàng.', 'error');
     return;
   }
 
-  if (!data[4]) {
-    showStatus(
-      'QR thiếu Số Lượng Yêu Cầu.',
-      'error'
-    );
-    return;
-  }
+  const requestQuantity = parseNumber(data[4]);
 
-  const soLuongYeuCau = Number(data[4]);
+  if (requestQuantity === null || requestQuantity <= 0) {
+    scanLocked = false;
 
-  if (
-    !Number.isFinite(soLuongYeuCau) ||
-    soLuongYeuCau <= 0
-  ) {
     showStatus(
       'Số Lượng Yêu Cầu trong QR không hợp lệ.',
       'error'
     );
+
     return;
   }
 
-  document.getElementById('maLenh').value = data[0];
-
-  document.getElementById('khachHang').value = data[1];
-
-  document.getElementById('donHang').value = data[2];
-
-  document.getElementById('quyCach').value = data[3];
-
-  document.getElementById('soLuongYeuCau').value = data[4];
+  document.getElementById('qrMaLenh').value = data[0];
+  document.getElementById('qrKhachHang').value = data[1];
+  document.getElementById('qrDonHang').value = data[2];
+  document.getElementById('qrQuyCach').value = data[3];
+  document.getElementById('qrSoLuongYeuCau').value = data[4];
 
   stopScanner();
 
@@ -559,6 +720,10 @@ function processQR(text) {
     'Đã quét QR thành công.',
     'success'
   );
+
+  setTimeout(function() {
+    document.getElementById('soLuong').focus();
+  }, 250);
 }
 
 async function submitData() {
@@ -570,20 +735,55 @@ async function submitData() {
     return;
   }
 
-  const maLenh =
-    document.getElementById('maLenh').value.trim();
+  let maLenh = '';
+  let khachHang = '';
+  let donHang = '';
+  let quyCach = '';
+  let soLuongYeuCau = '';
+  let source = currentSource;
 
-  const khachHang =
-    document.getElementById('khachHang').value.trim();
+  if (currentSource === 'QR') {
+    maLenh = document.getElementById('qrMaLenh').value.trim();
+    khachHang = document.getElementById('qrKhachHang').value.trim();
+    donHang = document.getElementById('qrDonHang').value.trim();
+    quyCach = document.getElementById('qrQuyCach').value.trim();
+    soLuongYeuCau =
+      document.getElementById('qrSoLuongYeuCau').value.trim();
 
-  const donHang =
-    document.getElementById('donHang').value.trim();
+    if (!maLenh) {
+      showStatus('Chưa có Mã Lệnh từ QR.', 'error');
+      return;
+    }
 
-  const quyCach =
-    document.getElementById('quyCach').value.trim();
+    if (!khachHang) {
+      showStatus('Chưa có Khách Hàng từ QR.', 'error');
+      return;
+    }
 
-  const soLuongYeuCau =
-    document.getElementById('soLuongYeuCau').value.trim();
+    if (!donHang) {
+      showStatus('Chưa có Đơn Hàng từ QR.', 'error');
+      return;
+    }
+
+    if (!quyCach) {
+      showStatus('Chưa có Quy Cách Đơn Hàng từ QR.', 'error');
+      return;
+    }
+
+    if (!soLuongYeuCau) {
+      showStatus('Chưa có Số Lượng Yêu Cầu từ QR.', 'error');
+      return;
+    }
+  }
+
+  if (currentSource === 'MANUAL') {
+    maLenh = document.getElementById('maLenh').value.trim();
+    khachHang = document.getElementById('khachHang').value.trim();
+    donHang = document.getElementById('donHang').value.trim();
+    quyCach = document.getElementById('quyCach').value.trim();
+    soLuongYeuCau =
+      document.getElementById('soLuongYeuCau').value.trim();
+  }
 
   const soLuong =
     document.getElementById('soLuong').value.trim();
@@ -593,46 +793,6 @@ async function submitData() {
 
   const ghiChu =
     document.getElementById('ghiChu').value.trim();
-
-  if (!maLenh) {
-    showStatus(
-      'Thiếu Mã Lệnh.',
-      'error'
-    );
-    return;
-  }
-
-  if (!khachHang) {
-    showStatus(
-      'Thiếu Khách Hàng.',
-      'error'
-    );
-    return;
-  }
-
-  if (!donHang) {
-    showStatus(
-      'Thiếu Đơn Hàng.',
-      'error'
-    );
-    return;
-  }
-
-  if (!quyCach) {
-    showStatus(
-      'Thiếu Quy Cách Đơn Hàng.',
-      'error'
-    );
-    return;
-  }
-
-  if (!soLuongYeuCau) {
-    showStatus(
-      'Thiếu Số Lượng Yêu Cầu.',
-      'error'
-    );
-    return;
-  }
 
   if (!soLuong) {
     showStatus(
@@ -654,12 +814,9 @@ async function submitData() {
     return;
   }
 
-  const soLuongNumber = Number(soLuong);
+  const quantity = parseNumber(soLuong);
 
-  if (
-    !Number.isFinite(soLuongNumber) ||
-    soLuongNumber <= 0
-  ) {
+  if (quantity === null || quantity <= 0) {
     showStatus(
       currentMode === 'NHAP'
         ? 'Số Lượng Nhập không hợp lệ.'
@@ -669,10 +826,29 @@ async function submitData() {
     return;
   }
 
+  if (soLuongYeuCau) {
+    const requestQuantity = parseNumber(soLuongYeuCau);
+
+    if (
+      requestQuantity === null ||
+      requestQuantity <= 0
+    ) {
+      showStatus(
+        'Số Lượng Yêu Cầu không hợp lệ.',
+        'error'
+      );
+      return;
+    }
+  }
+
   const submitButton =
     document.getElementById('submitButton');
 
   submitButton.disabled = true;
+
+  if (scannerRunning) {
+    stopScanner();
+  }
 
   showStatus(
     'Đang ghi dữ liệu...',
@@ -682,20 +858,26 @@ async function submitData() {
   const params = new URLSearchParams({
     action: 'save',
     token: API_TOKEN,
+    requestId: createRequestId(),
     mode: currentMode,
+    source: source,
     maLenh: maLenh,
     khachHang: khachHang,
     donHang: donHang,
     quyCach: quyCach,
-    soLuongYeuCau: soLuongYeuCau,
-    soLuong: soLuong,
+    soLuongYeuCau: normalizeNumber(soLuongYeuCau),
+    soLuong: normalizeNumber(soLuong),
     viTri: viTri,
     ghiChu: ghiChu
   });
 
   try {
     const response = await fetch(
-      API_URL + '?' + params.toString()
+      API_URL + '?' + params.toString(),
+      {
+        method: 'GET',
+        cache: 'no-store'
+      }
     );
 
     const result = await response.json();
@@ -706,7 +888,11 @@ async function submitData() {
         'success'
       );
 
-      clearForm();
+      clearTransactionData();
+
+      setTimeout(function() {
+        document.getElementById('soLuong').focus();
+      }, 250);
     } else {
       showStatus(
         result.message || 'Không thể ghi dữ liệu.',
@@ -724,14 +910,62 @@ async function submitData() {
 }
 
 function clearForm() {
+  clearTransactionData();
+
+  clearStatus();
+}
+
+function clearTransactionData() {
   document.getElementById('maLenh').value = '';
   document.getElementById('khachHang').value = '';
   document.getElementById('donHang').value = '';
   document.getElementById('quyCach').value = '';
   document.getElementById('soLuongYeuCau').value = '';
+
+  document.getElementById('qrMaLenh').value = '';
+  document.getElementById('qrKhachHang').value = '';
+  document.getElementById('qrDonHang').value = '';
+  document.getElementById('qrQuyCach').value = '';
+  document.getElementById('qrSoLuongYeuCau').value = '';
+
   document.getElementById('soLuong').value = '';
   document.getElementById('viTri').value = '';
   document.getElementById('ghiChu').value = '';
+
+  scanLocked = false;
+}
+
+function createRequestId() {
+  if (
+    window.crypto &&
+    typeof window.crypto.randomUUID === 'function'
+  ) {
+    return window.crypto.randomUUID();
+  }
+
+  return Date.now().toString(36) +
+    '-' +
+    Math.random().toString(36).substring(2, 12);
+}
+
+function normalizeNumber(value) {
+  return String(value || '')
+    .trim()
+    .replace(/,/g, '.');
+}
+
+function parseNumber(value) {
+  const normalized = normalizeNumber(value);
+
+  if (!normalized) {
+    return null;
+  }
+
+  const number = Number(normalized);
+
+  return Number.isFinite(number)
+    ? number
+    : null;
 }
 
 function showStatus(message, type) {
@@ -752,6 +986,17 @@ function clearStatus() {
 
   status.className = 'status';
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('qrDataSection')
+    .classList.remove('hidden');
+});
+
+window.addEventListener('beforeunload', function() {
+  if (scannerRunning) {
+    stopScanner();
+  }
+});
 </script>
 
 </body>
